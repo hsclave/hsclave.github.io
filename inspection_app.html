@@ -1,0 +1,1840 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>APOLLON 성적서</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1C2B4A">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+/* ── Tokens ──────────────────────────────────────── */
+:root {
+  --navy:#1C2B4A; --blue:#2F6DE1;
+  --pass:#1A7A50; --pass-bg:#E6F4EE; --pass-bdr:#95CEAF;
+  --fail:#C8311F; --fail-bg:#FDECEA; --fail-bdr:#F2ABA4;
+  --bg:#EEF0F6; --surface:#FFF; --surface2:#F5F6FA;
+  --bdr:#D2D7E8; --bdr-lt:#E4E8F4;
+  --t1:#1C2B4A; --t2:#475070; --t3:#8A96BA;
+  --r:6px; --r2:4px;
+  --sh:0 1px 3px rgba(28,43,74,.07),0 1px 2px rgba(28,43,74,.05);
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0F1829;--surface:#182236;--surface2:#1D2A44;--bdr:#29395C;--bdr-lt:#223050;
+  --t1:#E2E8F6;--t2:#A4B0D2;--t3:#657090;
+  --pass-bg:#0C231A;--pass-bdr:#1B5038;--fail-bg:#260E0E;--fail-bdr:#6B2020;
+  --sh:0 1px 3px rgba(0,0,0,.35);
+}}
+:root[data-theme="dark"]{
+  --bg:#0F1829;--surface:#182236;--surface2:#1D2A44;--bdr:#29395C;--bdr-lt:#223050;
+  --t1:#E2E8F6;--t2:#A4B0D2;--t3:#657090;
+  --pass-bg:#0C231A;--pass-bdr:#1B5038;--fail-bg:#260E0E;--fail-bdr:#6B2020;
+  --sh:0 1px 3px rgba(0,0,0,.35);
+}
+
+/* ── Reset ───────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Noto Sans KR',-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  font-size:14px;line-height:1.5;color:var(--t1);background:var(--bg);
+  -webkit-tap-highlight-color:transparent}
+
+/* ── Shell ───────────────────────────────────────── */
+#app{display:flex;flex-direction:column;height:100vh;max-width:1100px;margin:0 auto}
+
+/* ── Header ──────────────────────────────────────── */
+.hdr{display:flex;align-items:center;gap:12px;padding:0 16px;height:50px;
+  background:var(--navy);flex-shrink:0}
+.hdr-brand{font-size:14px;font-weight:700;color:#fff;letter-spacing:-.2px;white-space:nowrap}
+.hdr-brand em{color:#7BAAFF;font-style:normal}
+.hdr-nav{display:flex;gap:4px;margin-left:auto}
+.tab-btn{padding:5px 14px;border-radius:5px;border:1.5px solid rgba(255,255,255,.18);
+  background:transparent;color:rgba(255,255,255,.65);font-family:inherit;
+  font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.tab-btn.on{background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.4)}
+.tab-btn:hover:not(.on){background:rgba(255,255,255,.07);color:rgba(255,255,255,.88)}
+
+/* ── Views ───────────────────────────────────────── */
+.view{flex:1;overflow-y:auto;padding:14px 16px}
+.view.off{display:none}
+
+/* ── Company Banner ──────────────────────────────── */
+.co-banner{display:flex;align-items:center;gap:16px;background:var(--surface);
+  border:1px solid var(--bdr-lt);border-radius:var(--r);box-shadow:var(--sh);
+  padding:14px 18px;margin-bottom:12px}
+.co-logo-wrap{width:70px;height:52px;border:1.5px dashed var(--bdr);border-radius:var(--r2);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  overflow:hidden;flex-shrink:0;transition:border-color .14s;background:var(--surface2)}
+.co-logo-wrap:hover{border-color:var(--blue)}
+.co-logo-wrap img{width:100%;height:100%;object-fit:contain}
+.co-logo-ph{font-size:10px;color:var(--t3);text-align:center;line-height:1.3}
+.co-info{display:flex;flex-direction:column;gap:3px}
+.co-name-edit{font-size:17px;font-weight:700;color:var(--t1);border:none;
+  border-bottom:1.5px solid transparent;background:transparent;font-family:inherit;
+  outline:none;min-width:130px;transition:border-color .14s}
+.co-name-edit:focus{border-bottom-color:var(--blue)}
+.co-hint{font-size:11px;color:var(--t3)}
+.co-doc-wrap{margin-left:auto;text-align:right}
+.co-doc-title{font-size:20px;font-weight:700;color:var(--navy);letter-spacing:-.3px}
+.co-doc-en{font-size:12px;color:var(--t3);font-weight:500;letter-spacing:.02em}
+
+/* ── Cards ───────────────────────────────────────── */
+.card{background:var(--surface);border:1px solid var(--bdr-lt);border-radius:var(--r);
+  box-shadow:var(--sh);margin-bottom:10px;overflow:hidden}
+.card-hd{display:flex;align-items:center;gap:8px;padding:9px 14px;
+  background:var(--surface2);border-bottom:1px solid var(--bdr-lt)}
+.sec-num{width:20px;height:20px;border-radius:50%;background:var(--blue);color:#fff;
+  font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.card-title{font-size:13px;font-weight:700}
+.card-title-en{font-size:10px;font-weight:500;color:var(--t3);margin-left:4px}
+.card-body{padding:13px}
+
+/* ── Form header ─────────────────────────────────── */
+.hdr-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:520px){.hdr-grid{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:3px}
+.lbl{font-size:11px;font-weight:700;color:var(--t3);letter-spacing:.04em}
+.lbl-en{font-size:10px;color:var(--t3);margin-left:4px;font-weight:400}
+.inp{padding:8px 11px;border:1.5px solid var(--bdr);border-radius:var(--r2);
+  background:var(--surface);color:var(--t1);font-family:inherit;font-size:13px;
+  outline:none;transition:border-color .14s;min-height:40px}
+.inp:focus{border-color:var(--blue)}
+.inp[readonly]{background:var(--surface2);color:var(--t2)}
+select.inp{cursor:pointer}
+
+/* ── Inspection table ────────────────────────────── */
+.tbl-wrap{overflow-x:auto}
+.itbl{width:100%;border-collapse:collapse}
+.itbl th,.itbl td{padding:8px 10px;border-bottom:1px solid var(--bdr-lt);
+  text-align:left;vertical-align:middle}
+.itbl tbody tr:last-child td{border-bottom:none}
+.itbl thead th{font-size:11px;font-weight:700;color:var(--t3);
+  background:var(--surface2);white-space:nowrap}
+.th-ko{display:block;font-weight:700}
+.th-en{display:block;font-size:9px;font-weight:400;color:var(--t3);opacity:.8;margin-top:1px}
+.td-ko{display:block;font-weight:600;font-size:13px}
+.td-en{display:block;font-size:11px;color:var(--t3);margin-top:1px}
+.std-ko{display:block;font-size:12px;color:var(--t2)}
+.std-en{display:block;font-size:11px;color:var(--t3);margin-top:2px;font-style:italic}
+.w-item{min-width:120px}
+.w-meth{min-width:100px}
+.w-val{min-width:130px}
+.w-res{min-width:150px;white-space:nowrap}
+
+/* ── Measurement input ───────────────────────────── */
+.m-wrap{display:flex;align-items:center;gap:5px}
+.m-inp{width:74px;padding:6px 8px;border:1.5px solid var(--bdr);border-radius:var(--r2);
+  background:var(--surface);color:var(--t1);font-family:inherit;font-size:13px;
+  font-variant-numeric:tabular-nums;outline:none;transition:border-color .14s;
+  -webkit-appearance:none;min-height:36px}
+.m-inp:focus{border-color:var(--blue)}
+.m-unit{font-size:11px;color:var(--t3);white-space:nowrap}
+
+/* ── Pass / Fail ─────────────────────────────────── */
+.pf{display:flex;gap:4px}
+.pf-btn{padding:6px 11px;border-radius:var(--r2);border:1.5px solid var(--bdr);
+  background:transparent;color:var(--t2);font-family:inherit;font-size:12px;font-weight:700;
+  cursor:pointer;transition:all .14s;white-space:nowrap;min-height:36px}
+.pf-btn:hover{border-color:var(--t3)}
+.pf-btn.Y.on{background:var(--pass-bg);border-color:var(--pass-bdr);color:var(--pass)}
+.pf-btn.N.on{background:var(--fail-bg);border-color:var(--fail-bdr);color:var(--fail)}
+
+/* ── Trial measurement ───────────────────────────── */
+.trial-block{display:flex;flex-direction:column;gap:6px}
+.trial-criterion{font-size:11.5px;color:var(--t2);margin-bottom:2px}
+.trial-criterion-en{font-size:10.5px;color:var(--t3);font-style:italic;margin-bottom:4px}
+.trial-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.trial-lbl{font-size:12px;font-weight:700;color:var(--navy);width:48px;flex-shrink:0}
+.trial-set{display:flex;flex-direction:column;align-items:center;gap:2px}
+.trial-tag{font-size:10px;font-weight:700;color:var(--t3)}
+
+/* ── Parts table ─────────────────────────────────── */
+.ptbl{width:100%;border-collapse:collapse;font-size:13px}
+.ptbl th,.ptbl td{padding:7px 9px;border:1px solid var(--bdr-lt)}
+.ptbl th{background:var(--surface2);font-size:11px;font-weight:700;color:var(--t3);text-align:center}
+.ptbl td:first-child{width:32px;text-align:center;color:var(--t3);font-size:12px}
+.p-inp{width:100%;padding:5px 7px;border:1.5px solid transparent;border-radius:var(--r2);
+  background:transparent;color:var(--t1);font-family:inherit;font-size:12px;
+  outline:none;transition:all .14s;min-height:32px}
+.p-inp:focus{border-color:var(--blue);background:var(--surface)}
+.p-name-inp{font-weight:600}
+.p-chk-cell{text-align:center;vertical-align:middle}
+.p-chk{width:22px;height:22px;cursor:pointer;accent-color:var(--blue);
+  display:block;margin:0 auto}
+.btn-del-row{padding:4px 9px;border-radius:3px;border:1px solid var(--bdr);
+  background:transparent;color:var(--t3);cursor:pointer;font-size:11px;transition:all .14s}
+.btn-del-row:hover{border-color:var(--fail-bdr);color:var(--fail);background:var(--fail-bg)}
+.btn-add-row{display:flex;align-items:center;gap:6px;margin-top:8px;
+  padding:7px 14px;border-radius:var(--r2);border:1.5px dashed var(--bdr);
+  background:transparent;color:var(--t3);font-family:inherit;font-size:12px;font-weight:600;
+  cursor:pointer;transition:all .14s;width:100%}
+.btn-add-row:hover{border-color:var(--blue);color:var(--blue)}
+
+/* ── Signature pad ───────────────────────────────── */
+.sig-pair{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:10px}
+@media(max-width:480px){.sig-pair{grid-template-columns:1fr}}
+.sig-col{}
+.sig-label{font-size:11px;font-weight:700;color:var(--t3);letter-spacing:.04em;
+  margin-bottom:4px;display:block}
+.sig-name-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.sig-name-lbl{font-size:11px;color:var(--t3);white-space:nowrap}
+.sig-name-inp{flex:1;padding:5px 9px;border:1.5px solid var(--bdr);border-radius:var(--r2);
+  background:var(--surface);color:var(--t1);font-family:inherit;font-size:13px;
+  outline:none;transition:border-color .14s;min-height:36px}
+.sig-name-inp:focus{border-color:var(--blue)}
+.sig-box{position:relative;border:1.5px solid var(--bdr);border-radius:var(--r2);
+  background:var(--surface);overflow:hidden}
+.sig-canvas{display:block;width:100%;height:90px;cursor:crosshair;touch-action:none}
+.sig-hint{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-size:11px;color:var(--bdr);pointer-events:none;user-select:none;white-space:nowrap}
+.sig-img-disp{display:none;width:100%;height:90px;object-fit:contain;background:var(--surface)}
+.sig-clear-btn{position:absolute;bottom:4px;right:4px;padding:3px 9px;
+  border-radius:3px;border:1px solid var(--bdr);background:rgba(255,255,255,.9);
+  color:var(--t3);font-family:inherit;font-size:11px;cursor:pointer;z-index:1;
+  backdrop-filter:blur(2px)}
+.sig-clear-btn:hover{border-color:var(--fail-bdr);color:var(--fail)}
+
+/* ── Footer ──────────────────────────────────────── */
+.big-pf{display:flex;gap:8px}
+.big-pf-btn{flex:1;padding:11px;border-radius:var(--r);border:2px solid var(--bdr);
+  background:transparent;color:var(--t2);font-family:inherit;font-size:14px;font-weight:700;
+  cursor:pointer;transition:all .15s;min-height:48px;line-height:1.3}
+.big-pf-btn .btn-en{display:block;font-size:10px;font-weight:500;opacity:.7}
+.big-pf-btn.P.on{background:var(--pass-bg);border-color:var(--pass);color:var(--pass)}
+.big-pf-btn.F.on{background:var(--fail-bg);border-color:var(--fail);color:var(--fail)}
+
+/* Notes — screen */
+.note-ta{width:100%;padding:10px 12px;border:1.5px solid var(--bdr);border-radius:var(--r2);
+  background:var(--surface);color:var(--t1);font-family:inherit;font-size:13px;
+  resize:vertical;min-height:80px;outline:none;line-height:1.6}
+.note-ta:focus{border-color:var(--blue)}
+.note-print{display:none}
+
+/* Bigo (비고란) drawing canvas */
+.bigo-box{position:relative;border:1.5px solid var(--bdr);border-radius:var(--r2);
+  background:var(--surface);overflow:hidden;margin-top:6px}
+.bigo-canvas{display:block;width:100%;height:180px;cursor:crosshair;touch-action:none}
+.bigo-hint{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-size:11px;color:var(--bdr);pointer-events:none;user-select:none;white-space:nowrap}
+.bigo-img-disp{display:none;width:100%;object-fit:contain;background:var(--surface)}
+.bigo-clear-btn{position:absolute;bottom:4px;right:4px;padding:3px 9px;
+  border-radius:3px;border:1px solid var(--bdr);background:rgba(255,255,255,.9);
+  color:var(--t3);font-family:inherit;font-size:11px;cursor:pointer;z-index:1;
+  backdrop-filter:blur(2px)}
+.bigo-clear-btn:hover{border-color:var(--fail-bdr);color:var(--fail)}
+
+/* ── Action bar ──────────────────────────────────── */
+.act-bar{display:flex;align-items:center;gap:8px;padding:10px 16px;
+  background:var(--surface);border-top:1px solid var(--bdr-lt);flex-shrink:0}
+.btn{display:flex;align-items:center;gap:5px;padding:9px 16px;border-radius:var(--r);
+  border:none;font-family:inherit;font-size:13px;font-weight:700;
+  cursor:pointer;transition:all .15s;min-height:42px;white-space:nowrap}
+.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover{opacity:.88}
+.btn-sec{background:var(--surface2);color:var(--t2);border:1.5px solid var(--bdr)}
+.btn-sec:hover{border-color:var(--t3);color:var(--t1)}
+.ml-auto{margin-left:auto}
+
+/* ── Records ─────────────────────────────────────── */
+.rec-hdr{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.s-inp{flex:1;padding:9px 13px;border:1.5px solid var(--bdr);border-radius:var(--r);
+  background:var(--surface);color:var(--t1);font-family:inherit;font-size:14px;
+  outline:none;min-height:42px}
+.s-inp:focus{border-color:var(--blue)}
+.rec-list{display:flex;flex-direction:column;gap:7px}
+.rec-item{background:var(--surface);border:1px solid var(--bdr-lt);border-radius:var(--r);
+  padding:11px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;
+  transition:all .15s;box-shadow:var(--sh)}
+.rec-item:hover{border-color:var(--blue);box-shadow:0 0 0 3px rgba(47,109,225,.08)}
+.rec-no{font-size:12px;font-weight:700;color:var(--blue);white-space:nowrap}
+.rec-model{font-weight:700;font-size:14px}
+.rec-prod{font-size:12px;color:var(--t3)}
+.rec-date{font-size:12px;color:var(--t3);margin-left:auto;white-space:nowrap}
+.badge{padding:2px 8px;border-radius:3px;font-size:11px;font-weight:700;white-space:nowrap}
+.badge-pass{background:var(--pass-bg);color:var(--pass);border:1px solid var(--pass-bdr)}
+.badge-fail{background:var(--fail-bg);color:var(--fail);border:1px solid var(--fail-bdr)}
+.badge-none{background:var(--surface2);color:var(--t3);border:1px solid var(--bdr)}
+.rec-del{padding:5px 9px;border-radius:4px;border:1px solid var(--bdr);background:transparent;
+  color:var(--t3);cursor:pointer;font-size:12px;transition:all .14s;flex-shrink:0}
+.rec-del:hover{border-color:var(--fail-bdr);color:var(--fail);background:var(--fail-bg)}
+.empty{text-align:center;padding:48px 20px;color:var(--t3)}
+.empty-ico{font-size:32px;margin-bottom:10px}
+
+/* ── Toast ───────────────────────────────────────── */
+.toast{position:fixed;bottom:72px;left:50%;transform:translateX(-50%) translateY(16px);
+  background:var(--navy);color:#fff;padding:9px 20px;border-radius:20px;
+  font-size:13px;font-weight:600;opacity:0;transition:all .22s;
+  pointer-events:none;z-index:100;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── Utility ─────────────────────────────────────── */
+.no-print{}
+
+/* ── WiFi Sync ───────────────────────────────────── */
+.wifi-section{width:100%;border-top:1px solid var(--bdr-lt);padding-top:10px;margin-top:6px}
+.wifi-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.wifi-label{font-size:11px;font-weight:700;color:var(--t3);white-space:nowrap}
+.wifi-ip-inp{flex:1;min-width:140px;padding:7px 10px;border:1.5px solid var(--bdr);
+  border-radius:var(--r2);background:var(--surface);color:var(--t1);
+  font-family:inherit;font-size:13px;outline:none;transition:border-color .14s;
+  font-variant-numeric:tabular-nums;min-height:36px}
+.wifi-ip-inp:focus{border-color:var(--blue)}
+.wifi-info{font-size:11px;color:var(--t3);margin-top:4px;line-height:1.4}
+.wifi-info.ok{color:var(--pass)}
+.wifi-info.err{color:var(--fail)}
+.desktop-qr-wrap{display:none;margin-top:10px;padding:10px;
+  background:var(--surface2);border-radius:var(--r2);border:1px solid var(--bdr-lt)}
+.desktop-qr-title{font-size:11px;font-weight:700;color:var(--t3);margin-bottom:6px}
+.desktop-qr-url{font-size:13px;font-weight:700;color:var(--blue);
+  letter-spacing:.01em;word-break:break-all;margin-bottom:8px}
+#qr-container canvas{border:3px solid #fff;border-radius:4px}
+
+/* ── Lamp select (내전압) ─────────────────────────── */
+.lamp-opt{display:inline-flex;align-items:center;gap:0;cursor:pointer}
+.lamp-opt input{position:absolute;opacity:0;width:0;height:0}
+.lamp-lbl{padding:4px 10px;border:1.5px solid var(--bdr);border-radius:var(--r2);
+  font-size:12px;font-weight:600;cursor:pointer;transition:.15s}
+.lamp-off{color:var(--pass);border-color:var(--pass-bdr);background:var(--pass-bg)}
+.lamp-on{color:var(--t3);border-color:var(--bdr);background:var(--surface2)}
+.lamp-opt input:checked+.lamp-off{background:var(--pass);color:#fff;border-color:var(--pass)}
+.lamp-opt input:checked+.lamp-on{background:var(--fail);color:#fff;border-color:var(--fail)}
+
+/* ── Model boxes ──────────────────────────────────── */
+.model-box{padding:5px 10px;border:1.5px solid var(--bdr);border-radius:var(--r2);
+  font-size:12px;font-weight:600;cursor:pointer;color:var(--t2);
+  background:var(--surface2);white-space:nowrap;transition:.15s;user-select:none}
+.model-box.sel{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+/* ── CI Photo ────────────────────────────────────── */
+.ci-photo-wrap{position:relative;display:inline-block}
+.ci-photo-wrap img{width:110px;height:90px;object-fit:cover;border-radius:var(--r2);
+  border:1px solid var(--bdr);display:block}
+.ci-photo-del{position:absolute;top:2px;right:2px;background:rgba(0,0,0,.55);
+  color:#fff;border:none;border-radius:50%;width:20px;height:20px;font-size:13px;
+  cursor:pointer;line-height:18px;text-align:center;padding:0}
+.ci-photo-del:hover{background:var(--fail)}
+@media print{.ci-photo-del{display:none!important}
+  #ci-photo-list img{width:90px;height:72px}}
+
+/* ══════════════════════════════════════════════════
+   PRINT STYLES
+   ══════════════════════════════════════════════════ */
+@media print {
+  @page{size:A4;margin:7mm 11mm}
+
+  .hdr,.act-bar,.no-print{display:none!important}
+  body{background:#fff;font-size:8pt;line-height:1.35;color:#000;
+    font-family:'Noto Sans KR','Malgun Gothic',sans-serif}
+  #app{height:auto}
+  .view{padding:0;overflow:visible;flex:none}
+  #view-records{display:none!important}
+
+  /* ── Banner ── */
+  .co-banner{box-shadow:none;border:1.5px solid #888;border-radius:0;
+    padding:5pt 9pt;margin-bottom:4pt;display:flex;align-items:center}
+  .co-logo-wrap{width:40pt;height:30pt;border:none;background:transparent}
+  .co-logo-ph{display:none!important}
+  .co-hint{display:none!important}
+  .co-name-edit{font-size:11pt;border-bottom:none}
+  .co-doc-title{font-size:15pt;font-weight:700;letter-spacing:-.3px}
+  .co-doc-en{font-size:8pt}
+
+  /* ── Cards ── */
+  .card{box-shadow:none;border:1px solid #bbb;margin-bottom:3pt;border-radius:0;
+    overflow:visible;page-break-inside:avoid}
+  .card-hd{padding:2pt 7pt;background:#ebebeb!important;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .card-title{font-size:8.5pt;font-weight:700}
+  .card-title-en{font-size:7.5pt}
+  .sec-num{width:12pt;height:12pt;font-size:7.5pt;
+    background:#444!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .card-body{padding:0}
+
+  /* ── Form header ── */
+  .hdr-grid{grid-template-columns:1fr 1fr;gap:4pt;padding:4pt 6pt}
+  .field{gap:1pt}
+  .lbl{font-size:7pt}
+  .inp{padding:2pt 4pt;font-size:7.5pt;border:1px solid #bbb;min-height:0;border-radius:0}
+  select.inp{-webkit-appearance:none}
+  /* ── Model boxes (print) ── */
+  #model-boxes{flex-wrap:nowrap;gap:2pt;margin-top:2pt}
+  .model-box{padding:1pt 4pt;font-size:6.5pt;border-width:1px;border-radius:2pt;
+    white-space:nowrap;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .model-box.sel{background:#2F6DE1!important;color:#fff!important;border-color:#2F6DE1!important}
+  /* ── Report no / date inline inputs ── */
+  #rno-year{width:42pt!important;font-size:7pt!important;padding:1pt 2pt!important}
+  #rno-seq{width:38pt!important;font-size:7pt!important;padding:1pt 4pt!important}
+
+  /* ── Table cells ── */
+  .itbl th,.itbl td{padding:2pt 4pt;border-bottom:1px solid #ccc}
+  .itbl thead th{background:#f0f0f0!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;font-size:7.5pt}
+  .th-ko{font-size:7.5pt;display:block!important}
+  .th-en{font-size:6.5pt;opacity:.8;display:block!important}
+  .td-ko{font-size:7.5pt;display:block!important}
+  .td-en{font-size:6.5pt;color:#444;display:block!important}
+  .std-ko{font-size:7.5pt;display:block!important}
+  .std-en{font-size:6.5pt;font-style:italic;color:#444;display:block!important}
+  .w-item{min-width:60pt}
+  .w-meth{min-width:55pt}
+  .w-res{min-width:50pt}
+
+  /* ── PF buttons ── */
+  .pf-btn:not(.on){display:none!important}
+  .pf-btn.on{padding:2pt 6pt;font-size:8pt;border-width:1px;min-height:0;border-radius:2pt;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .pf-btn.Y.on{background:var(--pass-bg)!important;color:var(--pass)!important;border-color:var(--pass-bdr)!important}
+  .pf-btn.N.on{background:var(--fail-bg)!important;color:var(--fail)!important;border-color:var(--fail-bdr)!important}
+
+  /* ── Measurements ── */
+  .m-inp{width:48pt;padding:2pt 4pt;font-size:8pt;border:1px solid #bbb;min-height:0;border-radius:0}
+  .m-unit{font-size:7.5pt}
+  .trial-criterion,.trial-criterion-en{font-size:7.5pt}
+  .trial-lbl{font-size:8pt;width:30pt}
+  .trial-tag{font-size:7pt}
+  .trial-row{gap:4pt;flex-wrap:nowrap}
+  .trial-block{gap:3pt}
+
+  /* ── Parts ── */
+  .ptbl th,.ptbl td{padding:3pt 6pt;font-size:8pt}
+  .ptbl th{background:#f0f0f0!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .p-inp{padding:2pt 4pt;font-size:8pt;border:none;min-height:0;border-radius:0}
+  .p-chk{width:12pt;height:12pt;accent-color:#000;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .btn-add-row,.btn-del-row{display:none!important}
+
+  /* ── Notes mirror ── */
+  .note-ta{display:none!important}
+  .note-print{display:block!important;border:1px solid #bbb;padding:5pt 7pt;
+    min-height:60pt;font-size:8pt;line-height:1.5;
+    white-space:pre-wrap;word-break:break-all;font-family:'Noto Sans KR','Malgun Gothic',sans-serif}
+
+  /* ── Big PF ── */
+  .big-pf-btn:not(.on){display:none!important}
+  .big-pf-btn.on{padding:6pt 12pt;font-size:11pt;border-width:1.5px;min-height:0;
+    border-radius:3pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .big-pf-btn.P.on{background:#e6f4ee!important;color:#1a7a50!important;border-color:#1a7a50!important}
+  .big-pf-btn.F.on{background:#fdecea!important;color:#c8311f!important;border-color:#c8311f!important}
+  .btn-en{font-size:8pt!important}
+  .card-body.footer-body{padding:7pt}
+
+  /* ── Signature ── */
+  .sig-pair{display:grid;grid-template-columns:1fr 1fr;gap:10pt;margin-top:8pt}
+  .sig-canvas{display:none!important}
+  .sig-clear-btn{display:none!important}
+  .sig-hint{display:none!important}
+  .sig-img-disp{display:block!important;height:55pt;border:1px solid #bbb;background:#fff}
+  .sig-name-inp{padding:1pt 4pt;font-size:8pt;border:1px solid #bbb;min-height:0;border-radius:0}
+  .sig-box{border:1px solid #bbb;background:#fff}
+  .sig-name-row{margin-bottom:3pt}
+
+  /* ── Page break — Section 4 starts page 2 ── */
+  #card-s4{page-break-before:always}
+
+  /* ── Page 3 — Parts record ── */
+  .card-parts{page-break-before:always}
+
+  /* ── Bigo canvas (print) ── */
+  .bigo-canvas{display:none!important}
+  .bigo-hint{display:none!important}
+  .bigo-clear-btn{display:none!important}
+  .bigo-img-disp{display:block!important;width:100%;min-height:120pt;
+    border:1px solid #bbb;background:#fff;object-fit:contain}
+  .bigo-box{border:1px solid #bbb;background:#fff}
+  .bigo-note-print{display:block!important;border:1px solid #bbb;padding:5pt 7pt;
+    min-height:40pt;font-size:8pt;line-height:1.5;
+    white-space:pre-wrap;word-break:break-all;font-family:'Noto Sans KR','Malgun Gothic',sans-serif}
+  .bigo-note-ta{display:none!important}
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- ── TOP NAV ──────────────────────────────────── -->
+<header class="hdr">
+  <div class="hdr-brand">F8033 <em>APOLLON 성적서</em></div>
+  <nav class="hdr-nav">
+    <button class="tab-btn on" id="tab-form"    onclick="switchView('form')">📋 성적서 작성</button>
+    <button class="tab-btn"    id="tab-records" onclick="switchView('records')">📂 기록 조회</button>
+  </nav>
+</header>
+
+<!-- ══ FORM VIEW ════════════════════════════════════ -->
+<div id="view-form" class="view">
+
+  <!-- 회사 배너 -->
+  <div class="co-banner">
+    <div class="co-logo-wrap" onclick="document.getElementById('logo-file').click()" title="클릭하여 로고 업로드 / Click to upload logo">
+      <img id="co-logo-img" src="" alt="" style="display:none;width:100%;height:100%;object-fit:contain">
+      <span class="co-logo-ph no-print" id="co-logo-ph" style="font-size:10px;color:var(--t3);text-align:center;padding:2px">로고<br>Logo</span>
+    </div>
+    <input type="file" id="logo-file" accept="image/*" style="display:none" onchange="handleLogo(this)">
+    <div class="co-info">
+      <input class="co-name-edit" id="co-name" value="HS Clave" spellcheck="false"
+             oninput="saveCompanyInfo()" placeholder="회사명">
+      <div class="co-hint no-print" style="font-size:11px;color:var(--t3)">회사명 클릭하여 수정 / Click to edit</div>
+    </div>
+    <div class="co-doc-wrap">
+      <div class="co-doc-title">제품 검사 성적서</div>
+      <div class="co-doc-en">Product Inspection Report</div>
+    </div>
+  </div>
+
+  <!-- 기본 정보 -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="card-title">기본 정보 <span class="card-title-en">/ Basic Information</span></div>
+    </div>
+    <div class="card-body">
+      <div class="hdr-grid">
+        <div class="field">
+          <label class="lbl">성적서 번호 <span class="lbl-en">Report No.</span></label>
+          <div style="display:flex;align-items:center;gap:4px;flex-wrap:nowrap">
+            <span style="font-size:13px;color:var(--t2);white-space:nowrap">HSPIR-</span>
+            <select id="rno-year" style="width:58px;padding:4px 2px;border:1.5px solid var(--bdr);border-radius:var(--r2);background:var(--surface);color:var(--t1);font-size:13px" onchange="composeReportNo()"></select>
+            <span style="font-size:13px;color:var(--t2)">-</span>
+            <input id="rno-seq" type="text" inputmode="numeric" maxlength="4" placeholder="0001"
+              style="width:60px;padding:4px 6px;border:1.5px solid var(--bdr);border-radius:var(--r2);background:var(--surface);color:var(--t1);font-size:13px;text-align:center"
+              oninput="composeReportNo()">
+          </div>
+        </div>
+        <div class="field">
+          <label class="lbl">검사일 <span class="lbl-en">Inspection Date</span></label>
+          <input class="inp" data-f="inspDate" type="date">
+        </div>
+        <div class="field" style="min-width:220px">
+          <label class="lbl">모델명 <span class="lbl-en">Model</span></label>
+          <div id="model-boxes" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px"></div>
+        </div>
+        <div class="field">
+          <label class="lbl">생산 번호 <span class="lbl-en">Serial No.</span></label>
+          <input class="inp" data-f="prodNo" placeholder="S/N">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 1 -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="sec-num">1</div>
+      <div class="card-title">외관 및 구조검사 <span class="card-title-en">/ Visual &amp; Structural Inspection</span></div>
+    </div>
+    <div class="card-body" style="padding:0">
+      <div class="tbl-wrap"><table class="itbl">
+        <thead><tr>
+          <th class="w-item"><span class="th-ko">검사항목</span><span class="th-en">Item</span></th>
+          <th class="w-meth"><span class="th-ko">검사방법</span><span class="th-en">Method</span></th>
+          <th><span class="th-ko">시험기준</span><span class="th-en">Criterion</span></th>
+          <th class="w-res"><span class="th-ko">판정</span><span class="th-en">Result</span></th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="td-ko">외관</span><span class="td-en">Appearance</span></td>
+            <td><span class="td-ko">육안검사</span><span class="td-en">Visual Inspection</span></td>
+            <td>
+              <span class="std-ko">제품 외관 표면에 사용에 지장을 줄 수 있는 스크래치, 찍힘, 변형, 도장 불량, 부식, 이물질이 없어야 한다.</span>
+              <span class="std-en">No scratches, dents, deformation, paint defects, corrosion, or foreign matter on the product surface.</span>
+            </td>
+            <td><div class="pf" data-group="s1_ext"></div></td>
+          </tr>
+          <tr>
+            <td><span class="td-ko">구조 (조립상태)</span><span class="td-en">Assembly Condition</span></td>
+            <td><span class="td-ko">육안검사 및 촉진</span><span class="td-en">Visual &amp; Physical</span></td>
+            <td>
+              <span class="std-ko">각 구성품의 조립 및 체결 상태가 견고하여 흔들림, 풀림, 결합 불량이 없어야 한다.</span>
+              <span class="std-en">All components must be firmly assembled with no looseness, unfastening, or coupling defects.</span>
+            </td>
+            <td><div class="pf" data-group="s1_str"></div></td>
+          </tr>
+          <tr>
+            <td><span class="td-ko">도어·커버 결합</span><span class="td-en">Door &amp; Cover Fit</span></td>
+            <td><span class="td-ko">육안검사</span><span class="td-en">Visual Inspection</span></td>
+            <td>
+              <span class="std-ko">도어 및 각종 커버가 본체와 틈새 없이 정확히 결합되어 있어야 한다.</span>
+              <span class="std-en">Door and all covers must be precisely fitted to the body without gaps.</span>
+            </td>
+            <td><div class="pf" data-group="s1_door"></div></td>
+          </tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- Section 2 -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="sec-num">2</div>
+      <div class="card-title">전기적 안전시험 <span class="card-title-en">/ Electrical Safety Test</span></div>
+    </div>
+    <div class="card-body" style="padding:0">
+      <div class="tbl-wrap"><table class="itbl">
+        <thead><tr>
+          <th class="w-item"><span class="th-ko">검사항목</span><span class="th-en">Item</span></th>
+          <th class="w-meth"><span class="th-ko">검사방법</span><span class="th-en">Method</span></th>
+          <th><span class="th-ko">시험기준</span><span class="th-en">Criterion</span></th>
+          <th class="w-val"><span class="th-ko">측정값</span><span class="th-en">Measured Value</span></th>
+          <th class="w-res"><span class="th-ko">판정</span><span class="th-en">Result</span></th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="td-ko">내전압시험</span><span class="td-en">Dielectric Strength</span></td>
+            <td><span class="td-ko">내전압시험기</span><span class="td-en">HV Tester</span></td>
+            <td><span class="std-ko">NG램프 비점등</span><span class="std-en">NG lamp must not illuminate.</span></td>
+            <td>
+              <div style="display:flex;gap:6px;flex-wrap:wrap">
+                <label class="lamp-opt"><input type="radio" name="s2_volt_lamp" value="비점등" onchange="setLamp(this)"><span class="lamp-lbl lamp-off">비점등</span></label>
+                <label class="lamp-opt"><input type="radio" name="s2_volt_lamp" value="점등" onchange="setLamp(this)"><span class="lamp-lbl lamp-on">점등</span></label>
+              </div>
+            </td>
+            <td><div class="pf" data-group="s2_volt"></div></td>
+          </tr>
+          <tr>
+            <td><span class="td-ko">누설전류 (외장) 정상상태</span><span class="td-en">Leakage (External) Normal</span></td>
+            <td><span class="td-ko">누설전류시험기</span><span class="td-en">Leakage Tester</span></td>
+            <td><span class="std-ko">≤ 0.1 mA</span><span class="std-en">Normal state ≤ 0.1 mA</span></td>
+            <td><div class="m-wrap"><input class="m-inp" data-f="s2_en_v" inputmode="decimal" placeholder=""><span class="m-unit">mA</span></div></td>
+            <td><div class="pf" data-group="s2_en_r"></div></td>
+          </tr>
+          <tr>
+            <td><span class="td-ko">누설전류 (외장) 단일고장</span><span class="td-en">Leakage (External) Fault</span></td>
+            <td><span class="td-ko">누설전류시험기</span><span class="td-en">Leakage Tester</span></td>
+            <td><span class="std-ko">≤ 0.5 mA</span><span class="std-en">Single fault ≤ 0.5 mA</span></td>
+            <td><div class="m-wrap"><input class="m-inp" data-f="s2_ef_v" inputmode="decimal" placeholder=""><span class="m-unit">mA</span></div></td>
+            <td><div class="pf" data-group="s2_ef_r"></div></td>
+          </tr>
+          <tr>
+            <td><span class="td-ko">누설전류 (접지) 정상상태</span><span class="td-en">Leakage (Ground) Normal</span></td>
+            <td><span class="td-ko">누설전류시험기</span><span class="td-en">Leakage Tester</span></td>
+            <td><span class="std-ko">≤ 5 mA</span><span class="std-en">Normal state ≤ 5 mA</span></td>
+            <td><div class="m-wrap"><input class="m-inp" data-f="s2_gn_v" inputmode="decimal" placeholder=""><span class="m-unit">mA</span></div></td>
+            <td><div class="pf" data-group="s2_gn_r"></div></td>
+          </tr>
+          <tr>
+            <td><span class="td-ko">누설전류 (접지) 단일고장</span><span class="td-en">Leakage (Ground) Fault</span></td>
+            <td><span class="td-ko">누설전류시험기</span><span class="td-en">Leakage Tester</span></td>
+            <td><span class="std-ko">≤ 10 mA</span><span class="std-en">Single fault ≤ 10 mA</span></td>
+            <td><div class="m-wrap"><input class="m-inp" data-f="s2_gf_v" inputmode="decimal" placeholder=""><span class="m-unit">mA</span></div></td>
+            <td><div class="pf" data-group="s2_gf_r"></div></td>
+          </tr>
+          <tr>
+            <td><span class="td-ko">접지저항시험</span><span class="td-en">Ground Resistance</span></td>
+            <td><span class="td-ko">보호접지 연속성시험기</span><span class="td-en">Earth Continuity Tester</span></td>
+            <td><span class="std-ko">≤ 0.2 Ω</span><span class="std-en">≤ 0.2 Ω</span></td>
+            <td><div class="m-wrap"><input class="m-inp" data-f="s2_gr_v" inputmode="decimal" placeholder=""><span class="m-unit">Ω</span></div></td>
+            <td><div class="pf" data-group="s2_gr_r"></div></td>
+          </tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- Section 3 -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="sec-num">3</div>
+      <div class="card-title">기능시험 <span class="card-title-en">/ Function Test</span></div>
+    </div>
+    <div class="card-body" style="padding:0">
+      <div class="tbl-wrap"><table class="itbl">
+        <thead><tr>
+          <th class="w-item"><span class="th-ko">검사항목</span><span class="th-en">Item</span></th>
+          <th class="w-meth"><span class="th-ko">검사방법</span><span class="th-en">Method</span></th>
+          <th><span class="th-ko">시험기준</span><span class="th-en">Criterion</span></th>
+          <th class="w-res"><span class="th-ko">판정</span><span class="th-en">Result</span></th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="td-ko">초기부팅</span><span class="td-en">Initial Boot</span></td>
+            <td><span class="td-ko">육안·청각검사</span><span class="td-en">Visual &amp; Auditory</span></td>
+            <td><span class="std-ko">전원 공급 시 부저가 울리고 LCD 화면이 표시되어야 한다.</span><span class="std-en">Buzzer sounds and LCD displays upon power supply.</span></td>
+            <td><div class="pf" data-group="s3_boot"></div></td>
+          </tr>
+          <tr>
+            <td><span class="td-ko">키패드 동작</span><span class="td-en">Keypad Operation</span></td>
+            <td><span class="td-ko">키패드 버튼 조작</span><span class="td-en">Button Operation</span></td>
+            <td><span class="std-ko">모든 기능이 정상적으로 동작되어야 한다.</span><span class="std-en">All functions must operate normally.</span></td>
+            <td><div class="pf" data-group="s3_key"></div></td>
+          </tr>
+          <tr>
+            <td><span class="td-ko">표시장치 (LCD)</span><span class="td-en">Display (LCD)</span></td>
+            <td><span class="td-ko">육안검사</span><span class="td-en">Visual Inspection</span></td>
+            <td><span class="std-ko">화면에 표시되는 모든 문자는 명확하고 오류가 없어야 한다.</span><span class="std-en">All characters on screen must be clear and error-free.</span></td>
+            <td><div class="pf" data-group="s3_lcd"></div></td>
+          </tr>
+          <tr>
+            <td><span class="td-ko">도어 동작</span><span class="td-en">Door Operation</span></td>
+            <td><span class="td-ko">수동 검사</span><span class="td-en">Manual Inspection</span></td>
+            <td><span class="std-ko">도어가 정상적으로 열리고 잠겨야 한다.</span><span class="std-en">Door must open and lock properly.</span></td>
+            <td><div class="pf" data-group="s3_dop"></div></td>
+          </tr>
+          <tr>
+            <td><span class="td-ko">도어스위치</span><span class="td-en">Door Switch</span></td>
+            <td><span class="td-ko">육안검사</span><span class="td-en">Visual Inspection</span></td>
+            <td><span class="std-ko">도어가 열린 상태에서는 기기가 작동하지 않아야 한다.</span><span class="std-en">Device must not operate when the door is open.</span></td>
+            <td><div class="pf" data-group="s3_dsw"></div></td>
+          </tr>
+          <tr>
+            <td><span class="td-ko">도어락 장치</span><span class="td-en">Door Lock (Optional)</span></td>
+            <td><span class="td-ko">육안검사</span><span class="td-en">Visual Inspection</span></td>
+            <td><span class="std-ko">기기 작동 중 도어락 잠금 상태가 해제되지 않고 유지되어야 한다.</span><span class="std-en">Door lock must remain engaged during device operation.</span></td>
+            <td><div class="pf" data-group="s3_dlk"></div></td>
+          </tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- Section 4 — page-break-before in print -->
+  <div class="card" id="card-s4">
+    <div class="card-hd">
+      <div class="sec-num">4</div>
+      <div class="card-title">성능시험 <span class="card-title-en">/ Performance Test</span></div>
+    </div>
+    <div class="card-body" style="padding:0">
+      <div class="tbl-wrap"><table class="itbl">
+        <thead><tr>
+          <th style="width:110px"><span class="th-ko">검사항목</span><span class="th-en">Item</span></th>
+          <th style="width:100px"><span class="th-ko">검사방법</span><span class="th-en">Method</span></th>
+          <th><span class="th-ko">시험기준 / 측정값</span><span class="th-en">Criterion / Measured Value</span></th>
+          <th style="width:140px"><span class="th-ko">판정</span><span class="th-en">Result</span></th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="td-ko">진공시험</span><span class="td-en">Vacuum Test</span></td>
+            <td><span class="td-ko">진공시험모드</span><span class="td-en">Vacuum Test Mode</span></td>
+            <td>
+              <div class="trial-block">
+                <div class="trial-criterion">설정 진공압까지 진공 후, 안정화된 진공값이 10분 경과 후 압력 강하량 <strong>20 mmHg 이내</strong>여야 한다.</div>
+                <div class="trial-criterion-en">Pressure drop must be within <strong>20 mmHg</strong> after 10 min at set vacuum.</div>
+                <div class="trial-row">
+                  <span class="trial-lbl">시작<br><small>Start</small></span>
+                  <div class="trial-set"><span class="trial-tag">1차 / 1st</span><div class="m-wrap"><input class="m-inp" data-f="s4_v1s" inputmode="decimal" placeholder="—"><span class="m-unit">mmHg</span></div></div>
+                  <div class="trial-set"><span class="trial-tag">2차 / 2nd</span><div class="m-wrap"><input class="m-inp" data-f="s4_v2s" inputmode="decimal" placeholder="—"><span class="m-unit">mmHg</span></div></div>
+                  <div class="trial-set"><span class="trial-tag">3차 / 3rd</span><div class="m-wrap"><input class="m-inp" data-f="s4_v3s" inputmode="decimal" placeholder="—"><span class="m-unit">mmHg</span></div></div>
+                </div>
+                <div class="trial-row">
+                  <span class="trial-lbl">종료<br><small>End</small></span>
+                  <div class="trial-set"><span class="trial-tag">1차 / 1st</span><div class="m-wrap"><input class="m-inp" data-f="s4_v1e" inputmode="decimal" placeholder="—"><span class="m-unit">mmHg</span></div></div>
+                  <div class="trial-set"><span class="trial-tag">2차 / 2nd</span><div class="m-wrap"><input class="m-inp" data-f="s4_v2e" inputmode="decimal" placeholder="—"><span class="m-unit">mmHg</span></div></div>
+                  <div class="trial-set"><span class="trial-tag">3차 / 3rd</span><div class="m-wrap"><input class="m-inp" data-f="s4_v3e" inputmode="decimal" placeholder="—"><span class="m-unit">mmHg</span></div></div>
+                </div>
+              </div>
+            </td>
+            <td><div class="pf" data-group="s4_vac"></div></td>
+          </tr>
+          <tr>
+            <td><span class="td-ko">온도/압력 측정시험</span><span class="td-en">Temp./Pressure Test</span></td>
+            <td><span class="td-ko">온도·압력 측정</span><span class="td-en">Temp. &amp; Pressure</span></td>
+            <td>
+              <div class="trial-block">
+                <div class="trial-criterion">121°C : 1.0 ~ 1.15 bar &nbsp;/&nbsp; 132°C : 1.95 ~ 2.05 bar</div>
+                <div class="trial-criterion-en">121°C : 1.0 ~ 1.15 bar &nbsp;/&nbsp; 132°C : 1.95 ~ 2.05 bar</div>
+                <div class="trial-row">
+                  <span class="trial-lbl">121°C</span>
+                  <div class="trial-set"><span class="trial-tag">1차 / 1st</span><div class="m-wrap"><input class="m-inp" data-f="s4_t121_1" inputmode="decimal" placeholder="—"><span class="m-unit">bar</span></div></div>
+                  <div class="trial-set"><span class="trial-tag">2차 / 2nd</span><div class="m-wrap"><input class="m-inp" data-f="s4_t121_2" inputmode="decimal" placeholder="—"><span class="m-unit">bar</span></div></div>
+                  <div class="trial-set"><span class="trial-tag">3차 / 3rd</span><div class="m-wrap"><input class="m-inp" data-f="s4_t121_3" inputmode="decimal" placeholder="—"><span class="m-unit">bar</span></div></div>
+                </div>
+                <div class="trial-row">
+                  <span class="trial-lbl">132°C</span>
+                  <div class="trial-set"><span class="trial-tag">1차 / 1st</span><div class="m-wrap"><input class="m-inp" data-f="s4_t132_1" inputmode="decimal" placeholder="—"><span class="m-unit">bar</span></div></div>
+                  <div class="trial-set"><span class="trial-tag">2차 / 2nd</span><div class="m-wrap"><input class="m-inp" data-f="s4_t132_2" inputmode="decimal" placeholder="—"><span class="m-unit">bar</span></div></div>
+                  <div class="trial-set"><span class="trial-tag">3차 / 3rd</span><div class="m-wrap"><input class="m-inp" data-f="s4_t132_3" inputmode="decimal" placeholder="—"><span class="m-unit">bar</span></div></div>
+                </div>
+              </div>
+            </td>
+            <td><div class="pf" data-group="s4_temp"></div></td>
+          </tr>
+          <tr>
+            <td><span class="td-ko">CI 인디케이터 시험</span><span class="td-en">CI Indicator Test</span></td>
+            <td><span class="td-ko">CI 인디케이터 확인</span><span class="td-en">CI Indicator Check</span></td>
+            <td>
+              <span class="std-ko">사이클 종료 후 CI 인디케이터가 기준 색상으로 변화되어야 한다.</span>
+              <span class="std-en">After cycle completion, CI indicator must change to the reference color.</span>
+            </td>
+            <td><div class="pf" data-group="s4_ci"></div></td>
+          </tr>
+          <!-- 사진 첨부 -->
+          <tr id="ci-photo-row">
+            <td colspan="4" style="padding:10px 8px">
+              <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap">
+                <span class="td-ko" style="white-space:nowrap;padding-top:6px">사진 첨부 <span class="td-en">/ Photo</span></span>
+                <div id="ci-photo-list" style="display:flex;gap:8px;flex-wrap:wrap;flex:1"></div>
+                <label class="btn btn-sec no-print" style="cursor:pointer;font-size:12px;white-space:nowrap">
+                  📷 사진 추가
+                  <input type="file" accept="image/*" multiple style="display:none" onchange="addCIPhotos(this)">
+                </label>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- 종합판정 및 서명 -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="card-title">종합판정 및 서명 <span class="card-title-en">/ Final Judgment &amp; Signature</span></div>
+    </div>
+    <div class="card-body footer-body">
+      <!-- 특기사항 -->
+      <div style="margin-bottom:14px">
+        <label class="lbl" style="margin-bottom:6px;display:block">특기사항 <span class="lbl-en">Special Notes / Remarks</span></label>
+        <textarea class="note-ta" data-f="notes" id="notes-ta"
+          placeholder="이상 사항이 있을 경우 기재 / Enter any special observations or defects"></textarea>
+        <div class="note-print" id="note-print-div"></div>
+      </div>
+
+      <!-- 종합판정 -->
+      <div style="margin-bottom:14px">
+        <label class="lbl" style="margin-bottom:7px;display:block">종합판정 <span class="lbl-en">Overall Result</span></label>
+        <div class="big-pf">
+          <button class="big-pf-btn P" data-bigpf="Y">✔ 합격<span class="btn-en">PASS</span></button>
+          <button class="big-pf-btn F" data-bigpf="N">✘ 불합격<span class="btn-en">FAIL</span></button>
+        </div>
+      </div>
+
+      <!-- 서명란 -->
+      <div class="sig-pair">
+        <!-- 검사자 -->
+        <div class="sig-col">
+          <span class="sig-label">검사자 / Inspector</span>
+          <div class="sig-name-row">
+            <span class="sig-name-lbl">이름 / Name</span>
+            <input class="sig-name-inp" data-f="inspector" placeholder="이름 / Name">
+          </div>
+          <div class="sig-box">
+            <canvas class="sig-canvas" id="sig-inspector" width="500" height="120"></canvas>
+            <img class="sig-img-disp" id="sig-inspector-img" alt="검사자 서명">
+            <span class="sig-hint no-print">펜 또는 손가락으로 서명 / Sign here</span>
+            <button class="sig-clear-btn no-print" onclick="clearSig('inspector')">지우기 / Clear</button>
+          </div>
+        </div>
+        <!-- 승인자 -->
+        <div class="sig-col">
+          <span class="sig-label">승인자 / Approver</span>
+          <div class="sig-name-row">
+            <span class="sig-name-lbl">이름 / Name</span>
+            <input class="sig-name-inp" data-f="approver" placeholder="이름 / Name">
+          </div>
+          <div class="sig-box">
+            <canvas class="sig-canvas" id="sig-approver" width="500" height="120"></canvas>
+            <img class="sig-img-disp" id="sig-approver-img" alt="승인자 서명">
+            <span class="sig-hint no-print">펜 또는 손가락으로 서명 / Sign here</span>
+            <button class="sig-clear-btn no-print" onclick="clearSig('approver')">지우기 / Clear</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 사용부품 기록 (3페이지) -->
+  <div class="card card-parts">
+    <div class="card-hd">
+      <div class="card-title">사용부품 기록 <span class="card-title-en">/ Parts Record (A/S Reference)</span></div>
+    </div>
+    <div class="card-body" style="padding:0 0 10px 0">
+      <div class="tbl-wrap">
+        <table class="ptbl">
+          <thead>
+            <tr>
+              <th rowspan="2">#</th>
+              <th rowspan="2" style="min-width:130px;text-align:left">부품명<br><span style="font-weight:400;font-size:9px;opacity:.8">Part Name</span></th>
+              <th colspan="3" style="border-bottom:1px solid var(--bdr-lt)">형식/모델 선택<br><span style="font-weight:400;font-size:9px">Type / Model Selection</span></th>
+              <th rowspan="2" style="min-width:100px;text-align:left">비고<br><span style="font-weight:400;font-size:9px;opacity:.8">Remark</span></th>
+              <th rowspan="2" class="no-print" style="width:36px"></th>
+            </tr>
+            <tr>
+              <th style="min-width:60px">A</th>
+              <th style="min-width:60px">B</th>
+              <th style="min-width:60px">C</th>
+            </tr>
+          </thead>
+          <tbody id="parts-body"></tbody>
+        </table>
+      </div>
+      <div class="no-print" style="padding:0 10px">
+        <button class="btn-add-row" onclick="addPart()">＋ 부품 추가 / Add Part</button>
+      </div>
+    </div>
+
+    <!-- 비고란 (Remarks & Handwritten Note) -->
+    <div class="card-body" style="padding:10px 13px 14px 13px;border-top:1px solid var(--bdr-lt)">
+      <label class="lbl" style="margin-bottom:6px;display:block">비고란 <span class="lbl-en">/ Remarks</span></label>
+      <!-- Text input -->
+      <textarea class="note-ta bigo-note-ta" id="notes2-ta" data-f="notes2"
+        placeholder="비고 사항 입력 / Enter remarks" style="min-height:80px;resize:vertical"></textarea>
+      <div class="note-print bigo-note-print" id="note2-print-div"></div>
+      <!-- Drawing canvas section -->
+      <div style="margin-top:10px">
+        <div class="no-print" style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+          <span class="lbl">필기 메모 <span class="lbl-en">/ Handwritten Note</span></span>
+        </div>
+        <div class="bigo-box">
+          <canvas class="bigo-canvas" id="bigo-canvas" width="1000" height="320"></canvas>
+          <img class="bigo-img-disp" id="bigo-img" alt="비고 필기">
+          <span class="bigo-hint no-print">펜 또는 손가락으로 작성 / Draw with pen or finger</span>
+          <button class="bigo-clear-btn no-print" onclick="clearBigo()">지우기 / Clear</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /view-form -->
+
+<!-- ══ RECORDS VIEW ══════════════════════════════════ -->
+<div id="view-records" class="view off">
+  <div class="rec-hdr">
+    <input class="s-inp" id="search" placeholder="🔍  성적서 번호, 모델명, 생산번호 / Report No., Model, Serial No." oninput="renderRecords()">
+    <button class="btn btn-primary" onclick="newForm()">+ 새 성적서</button>
+  </div>
+  <div class="rec-list" id="rec-list"></div>
+</div>
+
+<!-- ── ACTION BARS ────────────────────────────────── -->
+<div class="act-bar" id="form-act">
+  <button class="btn btn-sec" onclick="exportPrint()">🖨 인쇄</button>
+  <button class="btn btn-sec" onclick="exportPDF()">📄 PDF 저장</button>
+  <button class="btn btn-sec" onclick="exportExcel()">📊 Excel</button>
+  <button class="btn btn-sec" onclick="newForm()">+ 새로 만들기</button>
+  <button class="btn btn-primary ml-auto" onclick="saveRecord()">💾 저장</button>
+</div>
+<div class="act-bar off" id="rec-act" style="flex-wrap:wrap;gap:8px 12px;align-items:flex-start;padding:10px 16px">
+  <div style="display:flex;flex-direction:column;gap:6px;flex:1;min-width:0">
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <button class="btn btn-sec" onclick="backupAll()">💾 백업</button>
+      <button class="btn btn-sec" onclick="setBackupDir()" id="btn-set-path">📁 경로 설정</button>
+      <button class="btn btn-sec" onclick="openBackupFile()">📂 불러오기</button>
+      <input type="file" id="restore-input" accept=".json" style="display:none" onchange="restoreFromInput(this)">
+    </div>
+    <div style="font-size:11px;color:var(--t3);display:flex;align-items:center;gap:4px;min-width:0">
+      <span>📁</span>
+      <span id="backup-path-disp" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">기본 다운로드 폴더 / Default Downloads</span>
+    </div>
+  </div>
+  <div style="font-size:12px;color:var(--t3);align-self:center;white-space:nowrap">
+    총 <strong id="rec-count">0</strong>건
+  </div>
+
+  <!-- WiFi Sync Section -->
+  <div class="wifi-section" id="wifi-section">
+    <div class="wifi-row">
+      <span class="wifi-label">📡 WiFi 동기화</span>
+      <input class="wifi-ip-inp" id="wifi-ip" type="text" placeholder="데스크탑 IP (예: 192.168.1.10)" oninput="saveWifiIP()">
+      <button class="btn btn-sm" onclick="wifiSync()" style="background:var(--blue);color:#fff;border-color:var(--blue)">동기화</button>
+      <span class="wifi-info" id="wifi-status"></span>
+    </div>
+    <!-- QR code (desktop only) -->
+    <div class="desktop-qr-wrap" id="desktop-qr-wrap" style="display:none">
+      <div class="desktop-qr-title" id="qr-url-title">📱 태블릿에서 앱 설치</div>
+      <div id="qr-container"></div>
+      <div class="desktop-qr-url" id="qr-url-text"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+</div><!-- /app -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+// ── Constants ──────────────────────────────────────────
+const DB='apollon_v3', CO_KEY='apollon_co_v1';
+const PF_GROUPS=['s1_ext','s1_str','s1_door',
+  's2_volt','s2_en_r','s2_ef_r','s2_gn_r','s2_gf_r','s2_gr_r',
+  's3_boot','s3_key','s3_lcd','s3_dop','s3_dsw','s3_dlk',
+  's4_vac','s4_temp','s4_ci'];
+const DATA_FIELDS=['reportNo','inspDate','model','prodNo','s2_volt_lamp',
+  's2_en_v','s2_ef_v','s2_gn_v','s2_gf_v','s2_gr_v',
+  's4_v1s','s4_v2s','s4_v3s','s4_v1e','s4_v2e','s4_v3e',
+  's4_t121_1','s4_t121_2','s4_t121_3',
+  's4_t132_1','s4_t132_2','s4_t132_3',
+  'notes','inspector','approver'];
+const DEF_PARTS=['진공펌프 / Vacuum Pump','안전밸브 / Safety Valve',
+  '도어스위치 / Door Switch','온도센서 / Temperature Sensor',
+  '솔레노이드밸브 / Solenoid Valve','에어필터 / Air Filter',
+  'THERMOSTAT','저수통 / Water Tank'];
+
+// ── State ──────────────────────────────────────────────
+let records=[], cur=null;
+function loadDB(){try{records=JSON.parse(localStorage.getItem(DB)||'[]')}catch{records=[]}}
+function saveDB(){localStorage.setItem(DB,JSON.stringify(records))}
+function today(){return new Date().toISOString().slice(0,10)}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+const MODELS=['APOLLON 2350V','APOLLON 2330V','APOLLON 2322V','APOLLON 2318V'];
+
+function nextNo(){
+  const yy=new Date().getFullYear().toString().slice(-2);
+  return `HSPIR-${yy}-`;
+}
+
+function initReportNoUI(){
+  // Year selector
+  const sel=document.getElementById('rno-year');
+  sel.innerHTML='';
+  const curYY=new Date().getFullYear();
+  for(let y=curYY-1;y<=curYY+3;y++){
+    const opt=document.createElement('option');
+    opt.value=String(y).slice(-2);
+    opt.textContent=String(y).slice(-2);
+    if(y===curYY)opt.selected=true;
+    sel.appendChild(opt);
+  }
+}
+
+function composeReportNo(){
+  const yy=document.getElementById('rno-year').value;
+  const seq=document.getElementById('rno-seq').value.trim();
+  const val=`HSPIR-${yy}-${seq}`;
+  if(cur)cur.reportNo=val;
+}
+
+function loadReportNoToUI(reportNo){
+  if(!reportNo)return;
+  // parse HSPIR-YY-NNNN
+  const m=reportNo.match(/^HSPIR-(\d{2})-(.*)$/);
+  if(m){
+    const sel=document.getElementById('rno-year');
+    if(sel)[...sel.options].forEach(o=>{if(o.value===m[1])o.selected=true;});
+    document.getElementById('rno-seq').value=m[2];
+  }
+}
+
+function initModelBoxes(){
+  const wrap=document.getElementById('model-boxes');
+  if(!wrap)return;
+  wrap.innerHTML='';
+  MODELS.forEach(m=>{
+    const box=document.createElement('div');
+    box.className='model-box';
+    box.textContent=m;
+    if(cur&&cur.model===m)box.classList.add('sel');
+    box.onclick=()=>{
+      wrap.querySelectorAll('.model-box').forEach(b=>b.classList.remove('sel'));
+      box.classList.add('sel');
+      if(cur)cur.model=m;
+    };
+    wrap.appendChild(box);
+  });
+}
+
+function setLamp(radio){
+  if(cur)cur.s2_volt_lamp=radio.value;
+}
+
+function loadLampUI(){
+  const v=cur&&cur.s2_volt_lamp;
+  document.querySelectorAll('input[name="s2_volt_lamp"]').forEach(r=>{
+    r.checked=(r.value===v);
+  });
+}
+function mkRecord(){
+  const yy=new Date().getFullYear().toString().slice(-2);
+  const r={id:uid(),createdAt:new Date().toISOString(),reportNo:`HSPIR-${yy}-`,
+    inspDate:today(),model:'',prodNo:'',overallResult:'',s2_volt_lamp:'',
+    inspector_sig:'',approver_sig:'',notes2:'',notes2_drawing:'',ci_photos:[]};
+  PF_GROUPS.forEach(g=>r[g]='');
+  DATA_FIELDS.forEach(f=>{if(!(f in r))r[f]=''});
+  r.parts=DEF_PARTS.map(n=>({name:n,a:false,b:false,c:false,note:''}));
+  return r;
+}
+
+// ── PF toggles ─────────────────────────────────────────
+function buildPF(g){
+  document.querySelectorAll(`.pf[data-group="${g}"]`).forEach(w=>{
+    w.innerHTML='';
+    [{v:'Y',ko:'적합',en:'Pass'},{v:'N',ko:'부적합',en:'Fail'}].forEach(({v,ko,en})=>{
+      const b=document.createElement('button');
+      b.className=`pf-btn ${v}`;b.type='button';
+      b.innerHTML=`${ko} <small style="font-size:10px;opacity:.75">${en}</small>`;
+      b.dataset.group=g;b.dataset.v=v;
+      b.onclick=()=>setPF(g,v);
+      w.appendChild(b);
+    });
+  });
+}
+function refreshPF(g){
+  document.querySelectorAll(`.pf-btn[data-group="${g}"]`).forEach(b=>{
+    b.classList.toggle('on',b.dataset.v===cur[g]);
+  });
+}
+function setPF(g,v){
+  if(!cur)return;
+  cur[g]=(cur[g]===v)?'':v;
+  refreshPF(g);
+}
+
+// ── Big PF ─────────────────────────────────────────────
+document.querySelectorAll('[data-bigpf]').forEach(b=>{
+  b.onclick=()=>{
+    if(!cur)return;
+    const v=b.dataset.bigpf;
+    cur.overallResult=(cur.overallResult===v)?'':v;
+    refreshBigPF();
+  };
+});
+function refreshBigPF(){
+  document.querySelectorAll('[data-bigpf]').forEach(b=>{
+    b.classList.toggle('on',b.dataset.bigpf===cur.overallResult);
+  });
+}
+
+// ── Parts ──────────────────────────────────────────────
+function buildParts(){
+  const tb=document.getElementById('parts-body');
+  tb.innerHTML='';
+  cur.parts.forEach((p,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td>${i+1}</td>
+      <td><input class="p-inp p-name-inp" data-pi="${i}" data-pk="name" value="${esc(p.name)}" placeholder="부품명 / Part Name"></td>
+      <td class="p-chk-cell"><input type="checkbox" class="p-chk" data-pi="${i}" data-pk="a" ${p.a?'checked':''}></td>
+      <td class="p-chk-cell"><input type="checkbox" class="p-chk" data-pi="${i}" data-pk="b" ${p.b?'checked':''}></td>
+      <td class="p-chk-cell"><input type="checkbox" class="p-chk" data-pi="${i}" data-pk="c" ${p.c?'checked':''}></td>
+      <td><input class="p-inp" data-pi="${i}" data-pk="note" value="${esc(p.note)}" placeholder="-"></td>
+      <td class="no-print" style="text-align:center">
+        <button class="btn-del-row" onclick="removePart(${i})">✕</button>
+      </td>`;
+    tb.appendChild(tr);
+  });
+  tb.querySelectorAll('.p-inp').forEach(inp=>{
+    inp.oninput=e=>{
+      const{pi,pk}=e.target.dataset;
+      cur.parts[parseInt(pi)][pk]=e.target.value;
+    };
+  });
+  tb.querySelectorAll('.p-chk').forEach(chk=>{
+    chk.onchange=e=>{
+      const{pi,pk}=e.target.dataset;
+      cur.parts[parseInt(pi)][pk]=e.target.checked;
+    };
+  });
+}
+function addPart(){cur.parts.push({name:'',a:false,b:false,c:false,note:''});buildParts()}
+function removePart(i){
+  if(cur.parts.length<=1){toast('최소 1개 이상 필요합니다');return}
+  cur.parts.splice(i,1);buildParts();
+}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;')}
+
+// ── Notes print mirror ─────────────────────────────────
+function syncNotesPrint(){
+  const div=document.getElementById('note-print-div');
+  if(div)div.textContent=cur.notes||'';
+}
+function syncNotes2Print(){
+  const div=document.getElementById('note2-print-div');
+  if(div)div.textContent=cur.notes2||'';
+}
+
+// ══ Signature Pad ══════════════════════════════════════
+const SIG_IDS=['inspector','approver'];
+const sigState={};  // {id: {drawing, lastX, lastY}}
+
+function initSigPads(){
+  SIG_IDS.forEach(id=>initSigPad(id));
+}
+
+function initSigPad(id){
+  const canvas=document.getElementById(`sig-${id}`);
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  ctx.lineCap='round';
+  ctx.lineJoin='round';
+  ctx.strokeStyle='#111';
+  ctx.lineWidth=2.2;
+  sigState[id]={drawing:false};
+
+  function getXY(e){
+    const rect=canvas.getBoundingClientRect();
+    const scaleX=canvas.width/rect.width;
+    const scaleY=canvas.height/rect.height;
+    const src=e.touches?e.touches[0]:e;
+    return{
+      x:(src.clientX-rect.left)*scaleX,
+      y:(src.clientY-rect.top)*scaleY
+    };
+  }
+
+  // Pointer events (works for stylus/pen + touch + mouse)
+  canvas.addEventListener('pointerdown',e=>{
+    e.preventDefault();
+    canvas.setPointerCapture(e.pointerId);
+    sigState[id].drawing=true;
+    const{x,y}=getXY(e);
+    sigState[id].lastX=x;
+    sigState[id].lastY=y;
+    ctx.beginPath();
+    ctx.moveTo(x,y);
+    // Hide hint
+    const hint=canvas.parentElement.querySelector('.sig-hint');
+    if(hint)hint.style.display='none';
+  },{passive:false});
+
+  canvas.addEventListener('pointermove',e=>{
+    e.preventDefault();
+    if(!sigState[id].drawing)return;
+    const{x,y}=getXY(e);
+    ctx.lineTo(x,y);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x,y);
+    sigState[id].lastX=x;
+    sigState[id].lastY=y;
+  },{passive:false});
+
+  canvas.addEventListener('pointerup',e=>{
+    e.preventDefault();
+    if(!sigState[id].drawing)return;
+    sigState[id].drawing=false;
+    ctx.beginPath();
+    saveSigData(id);
+  },{passive:false});
+
+  canvas.addEventListener('pointercancel',e=>{
+    sigState[id].drawing=false;
+    ctx.beginPath();
+  });
+
+  // Prevent default touch behaviors (scroll while drawing)
+  canvas.style.touchAction='none';
+}
+
+function saveSigData(id){
+  const canvas=document.getElementById(`sig-${id}`);
+  if(!canvas||!cur)return;
+  const data=canvas.toDataURL('image/png');
+  cur[`${id}_sig`]=data;
+}
+
+function clearSig(id){
+  const canvas=document.getElementById(`sig-${id}`);
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  if(cur)cur[`${id}_sig`]='';
+  // Show hint again
+  const hint=canvas.parentElement.querySelector('.sig-hint');
+  if(hint)hint.style.display='';
+  // Clear print image
+  const img=document.getElementById(`sig-${id}-img`);
+  if(img)img.src='';
+}
+
+function loadSigToCanvas(id){
+  const canvas=document.getElementById(`sig-${id}`);
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  const sigData=cur&&cur[`${id}_sig`];
+  const img=document.getElementById(`sig-${id}-img`);
+  const hint=canvas.parentElement.querySelector('.sig-hint');
+  if(sigData){
+    const image=new Image();
+    image.onload=()=>{ctx.drawImage(image,0,0,canvas.width,canvas.height)};
+    image.src=sigData;
+    if(img)img.src=sigData;
+    if(hint)hint.style.display='none';
+  } else {
+    if(img)img.src='';
+    if(hint)hint.style.display='';
+  }
+}
+
+// ── CI Photo Attachment ────────────────────────────────
+function renderCIPhotos(){
+  const list=document.getElementById('ci-photo-list');
+  if(!list||!cur)return;
+  list.innerHTML='';
+  (cur.ci_photos||[]).forEach((src,i)=>{
+    const wrap=document.createElement('div');
+    wrap.className='ci-photo-wrap';
+    const img=document.createElement('img');
+    img.src=src;
+    const del=document.createElement('button');
+    del.className='ci-photo-del no-print';
+    del.textContent='×';
+    del.onclick=()=>{cur.ci_photos.splice(i,1);renderCIPhotos();};
+    wrap.appendChild(img);wrap.appendChild(del);
+    list.appendChild(wrap);
+  });
+}
+
+function addCIPhotos(input){
+  if(!cur)return;
+  if(!cur.ci_photos)cur.ci_photos=[];
+  const files=Array.from(input.files);
+  let loaded=0;
+  files.forEach(file=>{
+    const fr=new FileReader();
+    fr.onload=e=>{
+      cur.ci_photos.push(e.target.result);
+      loaded++;
+      if(loaded===files.length)renderCIPhotos();
+    };
+    fr.readAsDataURL(file);
+  });
+  input.value='';
+}
+
+// ══ Bigo (비고란) Drawing Canvas ═══════════════════════
+function initBigoCanvas(){
+  const canvas=document.getElementById('bigo-canvas');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  ctx.lineCap='round';
+  ctx.lineJoin='round';
+  ctx.strokeStyle='#111';
+  ctx.lineWidth=2.8;
+  let drawing=false;
+
+  function getXY(e){
+    const rect=canvas.getBoundingClientRect();
+    const scaleX=canvas.width/rect.width;
+    const scaleY=canvas.height/rect.height;
+    const src=e.touches?e.touches[0]:e;
+    return{x:(src.clientX-rect.left)*scaleX,y:(src.clientY-rect.top)*scaleY};
+  }
+
+  canvas.addEventListener('pointerdown',e=>{
+    e.preventDefault();
+    canvas.setPointerCapture(e.pointerId);
+    drawing=true;
+    const{x,y}=getXY(e);
+    ctx.beginPath();ctx.moveTo(x,y);
+    const hint=canvas.parentElement.querySelector('.bigo-hint');
+    if(hint)hint.style.display='none';
+  },{passive:false});
+
+  canvas.addEventListener('pointermove',e=>{
+    e.preventDefault();
+    if(!drawing)return;
+    const{x,y}=getXY(e);
+    ctx.lineTo(x,y);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(x,y);
+  },{passive:false});
+
+  canvas.addEventListener('pointerup',e=>{
+    e.preventDefault();
+    if(!drawing)return;
+    drawing=false;
+    ctx.beginPath();
+    saveBigoData();
+  },{passive:false});
+
+  canvas.addEventListener('pointercancel',()=>{drawing=false;ctx.beginPath();});
+  canvas.style.touchAction='none';
+}
+
+function saveBigoData(){
+  const canvas=document.getElementById('bigo-canvas');
+  if(!canvas||!cur)return;
+  cur.notes2_drawing=canvas.toDataURL('image/png');
+}
+
+function clearBigo(){
+  const canvas=document.getElementById('bigo-canvas');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  if(cur)cur.notes2_drawing='';
+  const hint=canvas.parentElement.querySelector('.bigo-hint');
+  if(hint)hint.style.display='';
+  const img=document.getElementById('bigo-img');
+  if(img)img.src='';
+}
+
+function loadBigoToCanvas(){
+  const canvas=document.getElementById('bigo-canvas');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  const drawingData=cur&&cur.notes2_drawing;
+  const img=document.getElementById('bigo-img');
+  const hint=canvas.parentElement.querySelector('.bigo-hint');
+  if(drawingData){
+    const image=new Image();
+    image.onload=()=>{ctx.drawImage(image,0,0,canvas.width,canvas.height)};
+    image.src=drawingData;
+    if(img)img.src=drawingData;
+    if(hint)hint.style.display='none';
+  } else {
+    if(img)img.src='';
+    if(hint)hint.style.display='';
+  }
+}
+
+// ── Populate form ──────────────────────────────────────
+function populateForm(){
+  document.querySelectorAll('[data-f]').forEach(el=>el.value=cur[el.dataset.f]||'');
+  loadReportNoToUI(cur.reportNo);
+  initModelBoxes();
+  loadLampUI();
+  PF_GROUPS.forEach(g=>{buildPF(g);refreshPF(g)});
+  refreshBigPF();
+  buildParts();
+  syncNotesPrint();
+  syncNotes2Print();
+  SIG_IDS.forEach(id=>loadSigToCanvas(id));
+  loadBigoToCanvas();
+  renderCIPhotos();
+}
+
+// ── Live sync ──────────────────────────────────────────
+document.getElementById('view-form').addEventListener('input',e=>{
+  if(!cur)return;
+  if(e.target.dataset.f){
+    cur[e.target.dataset.f]=e.target.value;
+    if(e.target.dataset.f==='notes')syncNotesPrint();
+    if(e.target.dataset.f==='notes2')syncNotes2Print();
+  }
+});
+
+// ── CRUD ───────────────────────────────────────────────
+function newForm(){cur=mkRecord();populateForm();switchView('form')}
+function saveRecord(){
+  // Ensure latest sig and bigo data captured
+  SIG_IDS.forEach(id=>saveSigData(id));
+  saveBigoData();
+  const idx=records.findIndex(r=>r.id===cur.id);
+  if(idx>=0)records[idx]=cur;else records.unshift(cur);
+  saveDB();updateRecCount();toast('저장되었습니다 ✓  / Saved');
+}
+function loadRecord(id){
+  const r=records.find(r=>r.id===id);if(!r)return;
+  cur=JSON.parse(JSON.stringify(r));
+  // migrate old string a/b/c to boolean
+  cur.parts.forEach(p=>{
+    if(typeof p.a==='string')p.a=p.a.length>0;
+    if(typeof p.b==='string')p.b=p.b.length>0;
+    if(typeof p.c==='string')p.c=p.c.length>0;
+  });
+  // ensure sig fields exist
+  if(!('inspector_sig' in cur))cur.inspector_sig='';
+  if(!('approver_sig' in cur))cur.approver_sig='';
+  if(!('notes2' in cur))cur.notes2='';
+  if(!('notes2_drawing' in cur))cur.notes2_drawing='';
+  if(!('ci_photos' in cur))cur.ci_photos=[];
+  if(!('s2_volt_lamp' in cur))cur.s2_volt_lamp='';
+  populateForm();switchView('form');
+}
+function deleteRecord(id){
+  records=records.filter(r=>r.id!==id);
+  if(cur?.id===id)cur=mkRecord();
+  saveDB();updateRecCount();renderRecords();toast('삭제됨 / Deleted');
+}
+
+// ── View switch ────────────────────────────────────────
+function switchView(v){
+  ['form','records'].forEach(x=>{
+    document.getElementById(`view-${x}`).classList.toggle('off',x!==v);
+    document.getElementById(`tab-${x}`).classList.toggle('on',x===v);
+  });
+  document.getElementById('form-act').classList.toggle('off',v!=='form');
+  document.getElementById('rec-act').classList.toggle('off',v!=='records');
+  if(v==='records')renderRecords();
+}
+
+// ── Records list ───────────────────────────────────────
+function renderRecords(){
+  const q=(document.getElementById('search').value||'').toLowerCase();
+  const list=document.getElementById('rec-list');
+  const fil=records.filter(r=>!q||(r.reportNo||'').toLowerCase().includes(q)||(r.model||'').toLowerCase().includes(q)||(r.prodNo||'').toLowerCase().includes(q));
+  if(!fil.length){
+    list.innerHTML=`<div class="empty"><div class="empty-ico">📋</div>${records.length?'검색 결과 없음 / No results':'저장된 성적서 없음 / No records'}<br><small>새 성적서를 작성 후 저장해주세요</small></div>`;
+    return;
+  }
+  list.innerHTML='';
+  fil.forEach(r=>{
+    const d=document.createElement('div');d.className='rec-item';
+    const res=r.overallResult;
+    const badge=res==='Y'?'<span class="badge badge-pass">합격 PASS</span>':res==='N'?'<span class="badge badge-fail">불합격 FAIL</span>':'<span class="badge badge-none">미판정</span>';
+    d.innerHTML=`
+      <div class="rec-no">${esc(r.reportNo||'—')}</div>
+      <div><div class="rec-model">${esc(r.model||'모델 미입력')}</div><div class="rec-prod">S/N: ${esc(r.prodNo||'—')}</div></div>
+      ${badge}
+      <div class="rec-date">${r.inspDate||r.createdAt?.slice(0,10)||'—'}</div>
+      <button class="rec-del" data-id="${r.id}">🗑</button>`;
+    d.addEventListener('click',e=>{if(!e.target.classList.contains('rec-del'))loadRecord(r.id)});
+    d.querySelector('.rec-del').addEventListener('click',e=>{
+      e.stopPropagation();
+      if(confirm(`성적서 ${r.reportNo}를 삭제하시겠습니까?\nDelete this record?`))deleteRecord(r.id);
+    });
+    list.appendChild(d);
+  });
+}
+function updateRecCount(){const el=document.getElementById('rec-count');if(el)el.textContent=records.length}
+
+// ── Print ──────────────────────────────────────────────
+function preparePrint(){
+  SIG_IDS.forEach(id=>{
+    saveSigData(id);
+    const img=document.getElementById(`sig-${id}-img`);
+    if(img&&cur[`${id}_sig`])img.src=cur[`${id}_sig`];
+  });
+  syncNotesPrint();
+  syncNotes2Print();
+  saveBigoData();
+  const bigoImg=document.getElementById('bigo-img');
+  if(bigoImg&&cur.notes2_drawing)bigoImg.src=cur.notes2_drawing;
+}
+
+function exportPrint(){
+  preparePrint();
+  if(window.electronAPI&&window.electronAPI.printPage){
+    window.electronAPI.printPage();
+  } else {
+    window.print();
+  }
+}
+
+async function exportPDF(){
+  preparePrint();
+  if(window.electronAPI&&window.electronAPI.savePDF){
+    const result=await window.electronAPI.savePDF();
+    if(result&&result.success) toast('PDF 저장 완료!');
+    else if(result&&result.error) toast('저장 실패: '+result.error);
+  } else {
+    // 브라우저(태블릿)에서는 인쇄 다이얼로그로 대체
+    window.print();
+  }
+}
+
+// ── Excel ──────────────────────────────────────────────
+function exportExcel(){
+  if(typeof XLSX==='undefined'){alert('잠시 후 다시 시도해주세요');return}
+  const r=cur;
+  const pf=v=>v==='Y'?'적합 (Pass)':v==='N'?'부적합 (Fail)':'';
+  const chk=v=>v?'✓':'';
+  const rows=[
+    ['제품 검사 성적서 / Product Inspection Report (F8033)'],
+    ['성적서 번호 / Report No.',r.reportNo,'','검사일 / Date',r.inspDate],
+    ['모델명 / Model',r.model,'','생산번호 / Serial No.',r.prodNo],
+    [],
+    ['1. 외관 및 구조검사 / Visual & Structural Inspection'],
+    ['검사항목 / Item','시험기준 / Criterion','판정 / Result'],
+    ['외관 / Appearance','No scratches, dents, or defects on surface',pf(r.s1_ext)],
+    ['구조 / Assembly','Components firmly assembled with no looseness',pf(r.s1_str)],
+    ['도어·커버 / Door & Cover','Precisely fitted without gaps',pf(r.s1_door)],
+    [],
+    ['2. 전기적 안전시험 / Electrical Safety Test'],
+    ['검사항목 / Item','시험기준 / Criterion','측정값 / Value','판정 / Result'],
+    ['내전압 / Dielectric Strength','NG lamp must not illuminate',r.s2_volt_lamp||'',pf(r.s2_volt)],
+    ['누설전류 외장 정상 / Leakage Ext. Normal','≤ 0.1 mA',r.s2_en_v?r.s2_en_v+' mA':'',pf(r.s2_en_r)],
+    ['누설전류 외장 단일고장 / Leakage Ext. Fault','≤ 0.5 mA',r.s2_ef_v?r.s2_ef_v+' mA':'',pf(r.s2_ef_r)],
+    ['누설전류 접지 정상 / Leakage Gnd. Normal','≤ 5 mA',r.s2_gn_v?r.s2_gn_v+' mA':'',pf(r.s2_gn_r)],
+    ['누설전류 접지 단일고장 / Leakage Gnd. Fault','≤ 10 mA',r.s2_gf_v?r.s2_gf_v+' mA':'',pf(r.s2_gf_r)],
+    ['접지저항 / Ground Resistance','≤ 0.2 Ω',r.s2_gr_v?r.s2_gr_v+' Ω':'',pf(r.s2_gr_r)],
+    [],
+    ['3. 기능시험 / Function Test'],
+    ['검사항목 / Item','시험기준 / Criterion','판정 / Result'],
+    ['초기부팅 / Initial Boot','Buzzer & LCD on power-up',pf(r.s3_boot)],
+    ['키패드 / Keypad','All functions operate normally',pf(r.s3_key)],
+    ['LCD','Clear display, error-free',pf(r.s3_lcd)],
+    ['도어 동작 / Door Operation','Proper open & lock',pf(r.s3_dop)],
+    ['도어스위치 / Door Switch','No operation when door open',pf(r.s3_dsw)],
+    ['도어락 / Door Lock (Optional)','Lock maintained during operation',pf(r.s3_dlk)],
+    [],
+    ['4. 성능시험 / Performance Test'],
+    ['진공시험 / Vacuum Test','1차 Start','1차 End','2차 Start','2차 End','3차 Start','3차 End','판정'],
+    ['',...['s4_v1s','s4_v1e','s4_v2s','s4_v2e','s4_v3s','s4_v3e'].map(k=>r[k]?r[k]+' mmHg':''),pf(r.s4_vac)],
+    ['온도/압력 / Temp./Pressure','121°C 1차','121°C 2차','121°C 3차','132°C 1차','132°C 2차','132°C 3차','판정'],
+    ['',...['s4_t121_1','s4_t121_2','s4_t121_3','s4_t132_1','s4_t132_2','s4_t132_3'].map(k=>r[k]?r[k]+' bar':''),pf(r.s4_temp)],
+    ['CI 인디케이터 / CI Indicator','Color change after cycle','','','','','',pf(r.s4_ci)],
+    [],
+    ['종합판정 / Overall Result',r.overallResult==='Y'?'합격 (PASS)':r.overallResult==='N'?'불합격 (FAIL)':''],
+    ['특기사항 / Remarks',r.notes||''],
+    ['검사자 / Inspector',r.inspector||''],
+    ['승인자 / Approver',r.approver||''],
+    [],
+    ['사용부품 기록 / Parts Record'],
+    ['#','부품명 / Part Name','A','B','C','비고 / Remark'],
+    ...r.parts.map((p,i)=>[i+1,p.name,chk(p.a),chk(p.b),chk(p.c),p.note||'']),
+  ];
+  const wb=XLSX.utils.book_new();
+  const ws=XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols']=[{wch:30},{wch:22},{wch:14},{wch:14},{wch:14},{wch:14},{wch:14},{wch:12}];
+  XLSX.utils.book_append_sheet(wb,ws,'Inspection Report');
+  XLSX.writeFile(wb,`InspectionReport_${r.reportNo}_${r.inspDate||'nodate'}.xlsx`);
+  toast('Excel 다운로드 완료 / Excel downloaded');
+}
+
+// ── File System Access API helpers ────────────────────
+function openFsaDB(){
+  return new Promise((res,rej)=>{
+    const req=indexedDB.open('apollon_fsa',1);
+    req.onupgradeneeded=e=>e.target.result.createObjectStore('handles');
+    req.onsuccess=e=>res(e.target.result);
+    req.onerror=rej;
+  });
+}
+async function storeFsaHandle(key,handle){
+  try{
+    const db=await openFsaDB();
+    await new Promise((res,rej)=>{
+      const tx=db.transaction('handles','readwrite');
+      tx.objectStore('handles').put(handle,key);
+      tx.oncomplete=res;tx.onerror=rej;
+    });
+  }catch(e){}
+}
+async function loadFsaHandle(key){
+  try{
+    const db=await openFsaDB();
+    return await new Promise(res=>{
+      const tx=db.transaction('handles','readonly');
+      const req=tx.objectStore('handles').get(key);
+      req.onsuccess=()=>res(req.result||null);
+      req.onerror=()=>res(null);
+    });
+  }catch(e){return null;}
+}
+
+// ── Backup state ───────────────────────────────────────
+let backupDirHandle=null;
+
+function updatePathDisplay(name){
+  const el=document.getElementById('backup-path-disp');
+  if(el)el.textContent=name||'기본 다운로드 폴더 / Default Downloads';
+}
+
+async function initBackupPath(){
+  const stored=localStorage.getItem('backup_dir_name');
+  backupDirHandle=await loadFsaHandle('backupDir');
+  if(backupDirHandle)updatePathDisplay(backupDirHandle.name);
+  else if(stored)updatePathDisplay(stored+' (재연결 필요 / Reconnect needed)');
+}
+
+async function setBackupDir(){
+  if(!('showDirectoryPicker' in window)){
+    toast('이 브라우저에서는 경로 선택이 지원되지 않습니다');return;
+  }
+  try{
+    const handle=await window.showDirectoryPicker({mode:'readwrite',id:'apollon-backup'});
+    backupDirHandle=handle;
+    localStorage.setItem('backup_dir_name',handle.name);
+    await storeFsaHandle('backupDir',handle);
+    updatePathDisplay(handle.name);
+    toast('📁 경로 설정 완료: '+handle.name);
+  }catch(e){
+    if(e.name!=='AbortError')toast('경로 설정 실패 / Failed to set path');
+  }
+}
+
+// ── Backup / Restore ───────────────────────────────────
+async function backupAll(){
+  const data=JSON.stringify(records,null,2);
+  const fileName=`apollon_backup_${today()}.json`;
+
+  if(backupDirHandle){
+    try{
+      let perm=await backupDirHandle.queryPermission({mode:'readwrite'});
+      if(perm!=='granted')perm=await backupDirHandle.requestPermission({mode:'readwrite'});
+      if(perm==='granted'){
+        const fh=await backupDirHandle.getFileHandle(fileName,{create:true});
+        const writable=await fh.createWritable();
+        await writable.write(data);
+        await writable.close();
+        toast(`✓ 백업 완료 (${records.length}건) → ${backupDirHandle.name}`);
+        return;
+      }
+    }catch(e){
+      console.warn('FSA backup failed:',e);
+      updatePathDisplay('(경로 오류 — 재설정 필요)');
+      backupDirHandle=null;
+    }
+  }
+  // Fallback: browser download
+  const b=new Blob([data],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(b);a.download=fileName;
+  a.click();URL.revokeObjectURL(a.href);
+  toast(`백업 완료 (${records.length}건) / Backup done`);
+}
+
+async function openBackupFile(){
+  if('showOpenFilePicker' in window){
+    try{
+      const opts={
+        types:[{description:'JSON Backup',accept:{'application/json':['.json']}}],
+        multiple:false
+      };
+      if(backupDirHandle)opts.startIn=backupDirHandle;
+      const [fh]=await window.showOpenFilePicker(opts);
+      const file=await fh.getFile();
+      processRestore(file);
+      return;
+    }catch(e){
+      if(e.name==='AbortError')return;
+      // fall through to file input
+    }
+  }
+  document.getElementById('restore-input').click();
+}
+
+function restoreFromInput(input){
+  const file=input.files[0];if(!file)return;
+  processRestore(file);input.value='';
+}
+
+function processRestore(file){
+  const fr=new FileReader();
+  fr.onload=e=>{
+    try{
+      const imp=JSON.parse(e.target.result);
+      if(!Array.isArray(imp))throw 0;
+      const ex=new Set(records.map(r=>r.id));
+      let added=0;
+      imp.forEach(r=>{if(!ex.has(r.id)){records.unshift(r);added++}});
+      saveDB();updateRecCount();renderRecords();
+      toast(`복원 완료 — ${added}건 추가 / Restored ${added} records`);
+    }catch{alert('올바른 백업 파일이 아닙니다 / Invalid backup file');}
+  };
+  fr.readAsText(file);
+}
+
+// ── Company info ───────────────────────────────────────
+function loadCompanyInfo(){
+  try{
+    const co=JSON.parse(localStorage.getItem(CO_KEY)||'{}');
+    if(co.name)document.getElementById('co-name').value=co.name;
+    if(co.logo){
+      const img=document.getElementById('co-logo-img');
+      const ph=document.getElementById('co-logo-ph');
+      img.src=co.logo;img.style.display='block';
+      if(ph)ph.style.display='none';
+    }
+  }catch{}
+}
+function saveCompanyInfo(){
+  const name=document.getElementById('co-name').value;
+  const img=document.getElementById('co-logo-img');
+  try{localStorage.setItem(CO_KEY,JSON.stringify({name,logo:img.src||''}))}catch{}
+}
+function handleLogo(input){
+  const file=input.files[0];if(!file)return;
+  const fr=new FileReader();
+  fr.onload=e=>{
+    const img=document.getElementById('co-logo-img');
+    const ph=document.getElementById('co-logo-ph');
+    img.src=e.target.result;img.style.display='block';
+    if(ph)ph.style.display='none';
+    saveCompanyInfo();
+  };
+  fr.readAsDataURL(file);input.value='';
+}
+
+// ── Toast ──────────────────────────────────────────────
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+// ── WiFi Sync ──────────────────────────────────────────
+const WIFI_KEY='apollon_wifi_ip';
+const SYNC_PORT=8765;
+
+function saveWifiIP(){
+  const ip=document.getElementById('wifi-ip').value.trim();
+  try{localStorage.setItem(WIFI_KEY,ip)}catch{}
+}
+
+function loadWifiIP(){
+  try{
+    const ip=localStorage.getItem(WIFI_KEY)||'';
+    document.getElementById('wifi-ip').value=ip;
+  }catch{}
+}
+
+async function wifiSync(){
+  const rawIp=document.getElementById('wifi-ip').value.trim();
+  const st=document.getElementById('wifi-status');
+  if(!rawIp){st.textContent='⚠ IP를 입력하세요';return;}
+  st.textContent='🔄 동기화 중...';
+  try{
+    const base=`http://${rawIp}:${SYNC_PORT}`;
+    // 1) fetch desktop records
+    const res=await fetch(`${base}/apollon/data`,{method:'GET',headers:{'Content-Type':'application/json'}});
+    if(!res.ok)throw new Error('서버 응답 오류 '+res.status);
+    const remote=await res.json(); // array
+    // 2) merge into local
+    loadDB();const local=[...records];
+    const map={};
+    local.forEach(r=>map[r.id]=r);
+    remote.forEach(r=>{ if(!map[r.id]||r.ts>map[r.id].ts) map[r.id]=r; });
+    records=Object.values(map);
+    saveDB();
+    updateRecCount();
+    renderRecords();
+    // 3) push merged back to desktop
+    await fetch(`${base}/apollon/data`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(records)
+    });
+    st.textContent=`✅ 완료 (${records.length}건)`;
+    toast('WiFi 동기화 완료!');
+  }catch(e){
+    // Mixed-content block: HTTPS page → HTTP server (GitHub Pages → office PC)
+    const isMixed=location.protocol==='https:'&&(!e.message||e.message==='Failed to fetch'||e.message.startsWith('NetworkError'));
+    if(isMixed){
+      st.innerHTML='❌ Chrome 보안 설정 필요 &nbsp;<a href="chrome://flags/#unsafely-treat-insecure-origin-as-secure" style="color:var(--blue);font-size:11px">→ 설정 방법 보기</a>';
+      toast('⚙ chrome://flags 설정 필요 (아래 안내 확인)');
+    }else{
+      st.textContent='❌ 실패: '+e.message;
+      toast('동기화 실패: '+e.message);
+    }
+  }
+}
+
+// Auto-detect desktop IP when loaded from Electron app server
+function initWifiSync(){
+  loadWifiIP();
+  // If loaded over network from app server (port 8766), pre-fill IP
+  if(location.port==='8766'&&!document.getElementById('wifi-ip').value){
+    document.getElementById('wifi-ip').value=location.hostname;
+    saveWifiIP();
+  }
+  // Desktop (Electron): show QR code
+  if(window.electronAPI&&window.electronAPI.isElectron){
+    // Desktop: show QR for GitHub Pages URL (tablet installs from there)
+    const GITHUB_URL='https://hsclave.github.io/inspection_app.html';
+    const wrap=document.getElementById('desktop-qr-wrap');
+    wrap.style.display='block';
+    document.getElementById('qr-url-title').textContent='📱 태블릿 앱 설치 (GitHub Pages)';
+    document.getElementById('qr-url-text').textContent=GITHUB_URL;
+    const container=document.getElementById('qr-container');
+    container.innerHTML='';
+    new QRCode(container,{text:GITHUB_URL,width:148,height:148,
+      colorDark:'#1C2B4A',colorLight:'#FFFFFF',
+      correctLevel:QRCode.CorrectLevel.M});
+    // Hide IP input on desktop (it's the sync server, not the client)
+    document.getElementById('wifi-section').querySelector('.wifi-row').style.display='none';
+  }
+}
+
+// ── Init ───────────────────────────────────────────────
+loadDB();loadCompanyInfo();updateRecCount();
+initReportNoUI();
+cur=mkRecord();populateForm();
+initSigPads();
+initBigoCanvas();
+initBackupPath();
+initWifiSync();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+// ── Service Worker Registration ─────────────────────────
+if('serviceWorker' in navigator && location.protocol!=='file:'){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('service-worker.js').catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>

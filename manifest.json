@@ -1,0 +1,26 @@
+{
+  "name": "APOLLON 성적서",
+  "short_name": "APOLLON",
+  "description": "APOLLON 제품 검사 성적서 F8033",
+  "start_url": "/inspection_app.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#1C2B4A",
+  "theme_color": "#1C2B4A",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
