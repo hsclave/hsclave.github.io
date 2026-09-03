@@ -1813,21 +1813,52 @@ function initWifiSync(){
     document.getElementById('wifi-ip').value=location.hostname;
     saveWifiIP();
   }
-  // Desktop (Electron): show QR code
+  // Desktop (Electron): it IS the sync server, not a client
   if(window.electronAPI&&window.electronAPI.isElectron){
-    // Desktop: show QR for GitHub Pages URL (tablet installs from there)
-    const GITHUB_URL='https://hsclave.github.io/inspection_app.html';
+    // (1) 동기화 입력줄 숨기기 — QR 라이브러리와 무관하게 항상 먼저 실행
+    const row=document.getElementById('wifi-section').querySelector('.wifi-row');
+    if(row)row.style.display='none';
+
+    // (2) 데스크탑 안내문
+    const sec=document.getElementById('wifi-section');
+    if(sec&&!document.getElementById('desktop-sync-note')){
+      const note=document.createElement('div');
+      note.id='desktop-sync-note';
+      note.style.cssText='font-size:12px;color:var(--t3);line-height:1.6';
+      note.innerHTML='📡 <strong>이 PC가 동기화 서버입니다.</strong><br>'+
+        '동기화는 <strong>태블릿에서</strong> 실행해주세요. 태블릿의 동기화 버튼을 누르면 양쪽 기록이 자동으로 합쳐집니다.';
+      sec.insertBefore(note,sec.firstChild);
+    }
+
+    // (3) QR 코드 — 라이브러리가 나중에 로드되고, 오프라인일 수도 있음
     const wrap=document.getElementById('desktop-qr-wrap');
-    wrap.style.display='block';
-    document.getElementById('qr-url-title').textContent='📱 태블릿 앱 설치 (GitHub Pages)';
-    document.getElementById('qr-url-text').textContent=GITHUB_URL;
-    const container=document.getElementById('qr-container');
+    if(wrap){
+      wrap.style.display='block';
+      document.getElementById('qr-url-title').textContent='📱 태블릿 앱 설치 (GitHub Pages)';
+      document.getElementById('qr-url-text').textContent=GITHUB_URL;
+      renderDesktopQR(0);
+    }
+  }
+}
+
+const GITHUB_URL='https://hsclave.github.io/inspection_app.html';
+
+// QR 라이브러리는 이 스크립트보다 뒤에 로드되므로 준비될 때까지 재시도
+function renderDesktopQR(tries){
+  const container=document.getElementById('qr-container');
+  if(!container)return;
+  if(typeof QRCode==='undefined'){
+    if(tries<25){setTimeout(()=>renderDesktopQR(tries+1),200);return;}
+    container.innerHTML='<div style="font-size:11px;color:var(--t3)">QR 생성 불가 (인터넷 연결 없음)<br>아래 주소를 태블릿 브라우저에 직접 입력하세요</div>';
+    return;
+  }
+  try{
     container.innerHTML='';
     new QRCode(container,{text:GITHUB_URL,width:148,height:148,
       colorDark:'#1C2B4A',colorLight:'#FFFFFF',
       correctLevel:QRCode.CorrectLevel.M});
-    // Hide IP input on desktop (it's the sync server, not the client)
-    document.getElementById('wifi-section').querySelector('.wifi-row').style.display='none';
+  }catch(e){
+    container.innerHTML='<div style="font-size:11px;color:var(--t3)">QR 생성 실패 — 아래 주소를 직접 입력하세요</div>';
   }
 }
 
