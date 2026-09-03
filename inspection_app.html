@@ -1769,7 +1769,7 @@ async function wifiSync(){
     loadDB();const local=[...records];
     const map={};
     local.forEach(r=>map[r.id]=r);
-    remote.forEach(r=>{ if(!map[r.id]||r.ts>map[r.id].ts) map[r.id]=r; });
+  remote.forEach(r=>{ if(!map[r.id]||(!map[r.id].deleted&&(r.deleted||r.ts>map[r.id].ts))) map[r.id]=r; });
     records=Object.values(map);
     saveDB();
     updateRecCount();
