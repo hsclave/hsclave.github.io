@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HS Clave 서식</title>
+<meta name="theme-color" content="#1C2B4A">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --navy:#1C2B4A; --blue:#2F6DE1;
+  --bg:#F4F6FA; --surface:#FFF;
+  --t1:#1B2431; --t2:#5A6577; --t3:#8B95A5;
+  --bdr:#D8DEE8; --bdr-lt:#E8ECF3;
+  --r:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Noto Sans KR',-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  background:var(--bg); color:var(--t1);
+  min-height:100vh; display:flex; flex-direction:column;
+  -webkit-text-size-adjust:100%;
+}
+header{
+  background:var(--navy); color:#fff;
+  padding:22px 20px;
+}
+.brand{max-width:760px;margin:0 auto;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.brand h1{font-size:19px;font-weight:700;letter-spacing:-.3px}
+.brand span{font-size:12.5px;color:rgba(255,255,255,.6);font-weight:500}
+
+main{flex:1;padding:26px 20px 40px}
+.wrap{max-width:760px;margin:0 auto}
+.lead{font-size:13.5px;color:var(--t2);line-height:1.7;margin-bottom:20px}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+
+.app{
+  display:block; text-decoration:none; color:inherit;
+  background:var(--surface); border:1px solid var(--bdr-lt);
+  border-radius:var(--r); padding:20px 20px 18px;
+  border-left:4px solid var(--blue);
+  transition:border-color .15s, transform .15s, box-shadow .15s;
+}
+.app:hover{border-color:var(--bdr);border-left-color:var(--navy);
+  transform:translateY(-2px);box-shadow:0 6px 18px rgba(28,43,74,.09)}
+.app:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+
+.code{
+  display:inline-block; font-size:11px; font-weight:700; letter-spacing:.06em;
+  color:var(--blue); background:#EDF3FE; border-radius:4px;
+  padding:3px 8px; margin-bottom:10px;
+}
+.app h2{font-size:16.5px;font-weight:700;margin-bottom:4px;letter-spacing:-.2px}
+.app .en{font-size:11.5px;color:var(--t3);font-weight:500;margin-bottom:10px}
+.app p{font-size:12.5px;color:var(--t2);line-height:1.65}
+.go{margin-top:14px;font-size:12.5px;font-weight:600;color:var(--blue)}
+
+.note{
+  margin-top:26px; padding:15px 17px;
+  background:var(--surface); border:1px solid var(--bdr-lt);
+  border-radius:var(--r); font-size:12.5px; color:var(--t2); line-height:1.75;
+}
+.note strong{color:var(--t1)}
+.note code{
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:11.5px; background:var(--bg); padding:1px 5px; border-radius:3px;
+}
+
+footer{padding:0 20px 26px}
+.foot{max-width:760px;margin:0 auto;font-size:11.5px;color:var(--t3)}
+
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#12161D; --surface:#1A2029;
+    --t1:#E6EAF0; --t2:#A3ADBC; --t3:#77808F;
+    --bdr:#333C4A; --bdr-lt:#28303B;
+  }
+  :root:not([data-theme="light"]) .code{background:#1E2B44}
+  :root:not([data-theme="light"]) .note code{background:#12161D}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <h1>HS Clave 서식</h1>
+    <span>Report Forms</span>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <p class="lead">
+      사용할 서식을 선택하세요. 각 서식은 앱으로 설치해서 인터넷 없이도 쓸 수 있습니다.
+    </p>
+
+    <div class="grid">
+      <a class="app" href="./apollon/">
+        <span class="code">F8033</span>
+        <h2>제품 검사 성적서</h2>
+        <div class="en">Product Inspection Report</div>
+        <p>외관·구조검사, 전기적 안전시험, 기능시험, 성능시험 결과를 기록합니다.</p>
+        <div class="go">열기 →</div>
+      </a>
+
+      <a class="app" href="./f7141/">
+        <span class="code">F7141</span>
+        <h2>설치완료보고서</h2>
+        <div class="en">Installation Completion Report</div>
+        <p>설치 전 점검, 시운전, 기능 확인, 사용자 교육 내용과 고객 서명을 기록합니다.</p>
+        <div class="go">열기 →</div>
+      </a>
+    </div>
+
+    <div class="note">
+      <strong>태블릿에 설치하려면</strong><br>
+      위에서 서식을 연 다음, Chrome 메뉴에서 <code>홈 화면에 추가</code>를 누르세요.
+      서식마다 별도의 아이콘으로 설치되며, 기록은 각각 따로 보관됩니다.
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="foot">HS Clave</div>
+</footer>
+
+</body>
+</html>

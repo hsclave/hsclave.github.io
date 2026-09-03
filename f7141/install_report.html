@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>F7141 설치완료보고서</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1C2B4A">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+/* ── Tokens ──────────────────────────────────────── */
+:root {
+  --navy:#1C2B4A; --blue:#2F6DE1;
+  --pass:#1A7A50; --pass-bg:#E6F4EE; --pass-bdr:#95CEAF;
+  --fail:#C8311F; --fail-bg:#FDECEA; --fail-bdr:#F2ABA4;
+  --bg:#EEF0F6; --surface:#FFF; --surface2:#F5F6FA;
+  --bdr:#D2D7E8; --bdr-lt:#E4E8F4;
+  --t1:#1C2B4A; --t2:#475070; --t3:#8A96BA;
+  --r:6px; --r2:4px;
+  --sh:0 1px 3px rgba(28,43,74,.07),0 1px 2px rgba(28,43,74,.05);
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0F1829;--surface:#182236;--surface2:#1D2A44;--bdr:#29395C;--bdr-lt:#223050;
+  --t1:#E2E8F6;--t2:#A4B0D2;--t3:#657090;
+  --pass-bg:#0C231A;--pass-bdr:#1B5038;--fail-bg:#260E0E;--fail-bdr:#6B2020;
+  --sh:0 1px 3px rgba(0,0,0,.35);
+}}
+:root[data-theme="dark"]{
+  --bg:#0F1829;--surface:#182236;--surface2:#1D2A44;--bdr:#29395C;--bdr-lt:#223050;
+  --t1:#E2E8F6;--t2:#A4B0D2;--t3:#657090;
+  --pass-bg:#0C231A;--pass-bdr:#1B5038;--fail-bg:#260E0E;--fail-bdr:#6B2020;
+  --sh:0 1px 3px rgba(0,0,0,.35);
+}
+
+/* ── Reset ───────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Noto Sans KR',-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  font-size:14px;line-height:1.5;color:var(--t1);background:var(--bg);
+  -webkit-tap-highlight-color:transparent}
+
+/* ── Shell ───────────────────────────────────────── */
+#app{display:flex;flex-direction:column;height:100vh;max-width:1100px;margin:0 auto}
+
+/* ── Header ──────────────────────────────────────── */
+.hdr{display:flex;align-items:center;gap:12px;padding:0 16px;height:50px;
+  background:var(--navy);flex-shrink:0}
+.hdr-brand{font-size:14px;font-weight:700;color:#fff;letter-spacing:-.2px;white-space:nowrap}
+.hdr-brand em{color:#7BAAFF;font-style:normal}
+.hdr-nav{display:flex;gap:4px;margin-left:auto}
+.tab-btn{padding:5px 14px;border-radius:5px;border:1.5px solid rgba(255,255,255,.18);
+  background:transparent;color:rgba(255,255,255,.65);font-family:inherit;
+  font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.tab-btn.on{background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.4)}
+.tab-btn:hover:not(.on){background:rgba(255,255,255,.07);color:rgba(255,255,255,.88)}
+
+/* ── Views ───────────────────────────────────────── */
+.view{flex:1;overflow-y:auto;padding:14px 16px}
+.view.off{display:none}
+.act-bar.off{display:none}
+
+/* ── Company Banner ──────────────────────────────── */
+.co-banner{display:flex;align-items:center;gap:16px;background:var(--surface);
+  border:1px solid var(--bdr-lt);border-radius:var(--r);box-shadow:var(--sh);
+  padding:14px 18px;margin-bottom:12px}
+.co-logo-wrap{width:70px;height:52px;border:1.5px dashed var(--bdr);border-radius:var(--r2);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  overflow:hidden;flex-shrink:0;transition:border-color .14s;background:var(--surface2)}
+.co-logo-wrap:hover{border-color:var(--blue)}
+.co-logo-wrap img{width:100%;height:100%;object-fit:contain}
+.co-logo-ph{font-size:10px;color:var(--t3);text-align:center;line-height:1.3}
+.co-info{display:flex;flex-direction:column;gap:3px}
+.co-name-edit{font-size:17px;font-weight:700;color:var(--t1);border:none;
+  border-bottom:1.5px solid transparent;background:transparent;font-family:inherit;
+  outline:none;min-width:130px;transition:border-color .14s}
+.co-name-edit:focus{border-bottom-color:var(--blue)}
+.co-hint{font-size:11px;color:var(--t3)}
+.co-doc-wrap{margin-left:auto;text-align:right}
+.co-doc-title{font-size:20px;font-weight:700;color:var(--navy);letter-spacing:-.3px}
+.co-doc-en{font-size:12px;color:var(--t3);font-weight:500;letter-spacing:.02em}
+
+/* ── Cards ───────────────────────────────────────── */
+.card{background:var(--surface);border:1px solid var(--bdr-lt);border-radius:var(--r);
+  box-shadow:var(--sh);margin-bottom:10px;overflow:hidden}
+.card-hd{display:flex;align-items:center;gap:8px;padding:9px 14px;
+  background:var(--surface2);border-bottom:1px solid var(--bdr-lt)}
+.sec-num{width:20px;height:20px;border-radius:50%;background:var(--blue);color:#fff;
+  font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.card-title{font-size:13px;font-weight:700}
+.card-title-en{font-size:10px;font-weight:500;color:var(--t3);margin-left:4px}
+.card-body{padding:13px}
+
+/* ── Form header ─────────────────────────────────── */
+.hdr-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:520px){.hdr-grid{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:3px}
+.lbl{font-size:11px;font-weight:700;color:var(--t3);letter-spacing:.04em}
+.lbl-en{font-size:10px;color:var(--t3);margin-left:4px;font-weight:400}
+.inp{padding:8px 11px;border:1.5px solid var(--bdr);border-radius:var(--r2);
+  background:var(--surface);color:var(--t1);font-family:inherit;font-size:13px;
+  outline:none;transition:border-color .14s;min-height:40px}
+.inp:focus{border-color:var(--blue)}
+.inp[readonly]{background:var(--surface2);color:var(--t2)}
+select.inp{cursor:pointer}
+
+/* ── Inspection table ────────────────────────────── */
+.tbl-wrap{overflow-x:auto}
+.itbl{width:100%;border-collapse:collapse}
+.itbl th,.itbl td{padding:8px 10px;border-bottom:1px solid var(--bdr-lt);
+  text-align:left;vertical-align:middle}
+.itbl tbody tr:last-child td{border-bottom:none}
+.itbl thead th{font-size:11px;font-weight:700;color:var(--t3);
+  background:var(--surface2);white-space:nowrap}
+.th-ko{display:block;font-weight:700}
+.th-en{display:block;font-size:9px;font-weight:400;color:var(--t3);opacity:.8;margin-top:1px}
+.td-ko{display:block;font-weight:600;font-size:13px}
+.td-en{display:block;font-size:11px;color:var(--t3);margin-top:1px}
+.std-ko{display:block;font-size:12px;color:var(--t2)}
+.std-en{display:block;font-size:11px;color:var(--t3);margin-top:2px;font-style:italic}
+.w-item{min-width:120px}
+.w-meth{min-width:100px}
+.w-val{min-width:130px}
+.w-res{min-width:150px;white-space:nowrap}
+
+/* ── Measurement input ───────────────────────────── */
+.m-wrap{display:flex;align-items:center;gap:5px}
+.m-inp{width:74px;padding:6px 8px;border:1.5px solid var(--bdr);border-radius:var(--r2);
+  background:var(--surface);color:var(--t1);font-family:inherit;font-size:13px;
+  font-variant-numeric:tabular-nums;outline:none;transition:border-color .14s;
+  -webkit-appearance:none;min-height:36px}
+.m-inp:focus{border-color:var(--blue)}
+.m-unit{font-size:11px;color:var(--t3);white-space:nowrap}
+
+/* ── Pass / Fail ─────────────────────────────────── */
+.pf{display:flex;gap:4px}
+.pf-btn{padding:6px 11px;border-radius:var(--r2);border:1.5px solid var(--bdr);
+  background:transparent;color:var(--t2);font-family:inherit;font-size:12px;font-weight:700;
+  cursor:pointer;transition:all .14s;white-space:nowrap;min-height:36px}
+.pf-btn:hover{border-color:var(--t3)}
+.pf-btn.Y.on{background:var(--pass-bg);border-color:var(--pass-bdr);color:var(--pass)}
+.pf-btn.N.on{background:var(--fail-bg);border-color:var(--fail-bdr);color:var(--fail)}
+
+/* ── Trial measurement ───────────────────────────── */
+.trial-block{display:flex;flex-direction:column;gap:6px}
+.trial-criterion{font-size:11.5px;color:var(--t2);margin-bottom:2px}
+.trial-criterion-en{font-size:10.5px;color:var(--t3);font-style:italic;margin-bottom:4px}
+.trial-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.trial-lbl{font-size:12px;font-weight:700;color:var(--navy);width:48px;flex-shrink:0}
+.trial-set{display:flex;flex-direction:column;align-items:center;gap:2px}
+.trial-tag{font-size:10px;font-weight:700;color:var(--t3)}
+
+/* ── Parts table ─────────────────────────────────── */
+.ptbl{width:100%;border-collapse:collapse;font-size:13px}
+.ptbl th,.ptbl td{padding:7px 9px;border:1px solid var(--bdr-lt)}
+.ptbl th{background:var(--surface2);font-size:11px;font-weight:700;color:var(--t3);text-align:center}
+.ptbl td:first-child{width:32px;text-align:center;color:var(--t3);font-size:12px}
+.p-inp{width:100%;padding:5px 7px;border:1.5px solid transparent;border-radius:var(--r2);
+  background:transparent;color:var(--t1);font-family:inherit;font-size:12px;
+  outline:none;transition:all .14s;min-height:32px}
+.p-inp:focus{border-color:var(--blue);background:var(--surface)}
+.p-name-inp{font-weight:600}
+.p-chk-cell{text-align:center;vertical-align:middle}
+.p-chk{width:22px;height:22px;cursor:pointer;accent-color:var(--blue);
+  display:block;margin:0 auto}
+.btn-del-row{padding:4px 9px;border-radius:3px;border:1px solid var(--bdr);
+  background:transparent;color:var(--t3);cursor:pointer;font-size:11px;transition:all .14s}
+.btn-del-row:hover{border-color:var(--fail-bdr);color:var(--fail);background:var(--fail-bg)}
+.btn-add-row{display:flex;align-items:center;gap:6px;margin-top:8px;
+  padding:7px 14px;border-radius:var(--r2);border:1.5px dashed var(--bdr);
+  background:transparent;color:var(--t3);font-family:inherit;font-size:12px;font-weight:600;
+  cursor:pointer;transition:all .14s;width:100%}
+.btn-add-row:hover{border-color:var(--blue);color:var(--blue)}
+
+/* ── Signature pad ───────────────────────────────── */
+.sig-pair{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:10px}
+@media(max-width:480px){.sig-pair{grid-template-columns:1fr}}
+.sig-col{}
+.sig-label{font-size:11px;font-weight:700;color:var(--t3);letter-spacing:.04em;
+  margin-bottom:4px;display:block}
+.sig-name-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.sig-name-lbl{font-size:11px;color:var(--t3);white-space:nowrap}
+.sig-name-inp{flex:1;padding:5px 9px;border:1.5px solid var(--bdr);border-radius:var(--r2);
+  background:var(--surface);color:var(--t1);font-family:inherit;font-size:13px;
+  outline:none;transition:border-color .14s;min-height:36px}
+.sig-name-inp:focus{border-color:var(--blue)}
+.sig-box{position:relative;border:1.5px solid var(--bdr);border-radius:var(--r2);
+  background:var(--surface);overflow:hidden}
+.sig-canvas{display:block;width:100%;height:90px;cursor:crosshair;touch-action:none}
+.sig-hint{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-size:11px;color:var(--bdr);pointer-events:none;user-select:none;white-space:nowrap}
+.sig-img-disp{display:none;width:100%;height:90px;object-fit:contain;background:var(--surface)}
+.sig-clear-btn{position:absolute;bottom:4px;right:4px;padding:3px 9px;
+  border-radius:3px;border:1px solid var(--bdr);background:rgba(255,255,255,.9);
+  color:var(--t3);font-family:inherit;font-size:11px;cursor:pointer;z-index:1;
+  backdrop-filter:blur(2px)}
+.sig-clear-btn:hover{border-color:var(--fail-bdr);color:var(--fail)}
+
+/* ── Footer ──────────────────────────────────────── */
+.big-pf{display:flex;gap:8px}
+.big-pf-btn{flex:1;padding:11px;border-radius:var(--r);border:2px solid var(--bdr);
+  background:transparent;color:var(--t2);font-family:inherit;font-size:14px;font-weight:700;
+  cursor:pointer;transition:all .15s;min-height:48px;line-height:1.3}
+.big-pf-btn .btn-en{display:block;font-size:10px;font-weight:500;opacity:.7}
+.big-pf-btn.P.on{background:var(--pass-bg);border-color:var(--pass);color:var(--pass)}
+.big-pf-btn.F.on{background:var(--fail-bg);border-color:var(--fail);color:var(--fail)}
+
+/* Notes — screen */
+.note-ta{width:100%;padding:10px 12px;border:1.5px solid var(--bdr);border-radius:var(--r2);
+  background:var(--surface);color:var(--t1);font-family:inherit;font-size:13px;
+  resize:vertical;min-height:80px;outline:none;line-height:1.6}
+.note-ta:focus{border-color:var(--blue)}
+.note-print{display:none}
+
+/* Bigo (비고란) drawing canvas */
+.bigo-box{position:relative;border:1.5px solid var(--bdr);border-radius:var(--r2);
+  background:var(--surface);overflow:hidden;margin-top:6px}
+.bigo-canvas{display:block;width:100%;height:180px;cursor:crosshair;touch-action:none}
+.bigo-hint{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-size:11px;color:var(--bdr);pointer-events:none;user-select:none;white-space:nowrap}
+.bigo-img-disp{display:none;width:100%;object-fit:contain;background:var(--surface)}
+.bigo-clear-btn{position:absolute;bottom:4px;right:4px;padding:3px 9px;
+  border-radius:3px;border:1px solid var(--bdr);background:rgba(255,255,255,.9);
+  color:var(--t3);font-family:inherit;font-size:11px;cursor:pointer;z-index:1;
+  backdrop-filter:blur(2px)}
+.bigo-clear-btn:hover{border-color:var(--fail-bdr);color:var(--fail)}
+
+/* ── Action bar ──────────────────────────────────── */
+.act-bar{display:flex;align-items:center;gap:8px;padding:10px 16px;
+  background:var(--surface);border-top:1px solid var(--bdr-lt);flex-shrink:0}
+.btn{display:flex;align-items:center;gap:5px;padding:9px 16px;border-radius:var(--r);
+  border:none;font-family:inherit;font-size:13px;font-weight:700;
+  cursor:pointer;transition:all .15s;min-height:42px;white-space:nowrap}
+.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover{opacity:.88}
+.btn-sec{background:var(--surface2);color:var(--t2);border:1.5px solid var(--bdr)}
+.btn-sec:hover{border-color:var(--t3);color:var(--t1)}
+.ml-auto{margin-left:auto}
+
+/* ── Records ─────────────────────────────────────── */
+.rec-hdr{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.s-inp{flex:1;padding:9px 13px;border:1.5px solid var(--bdr);border-radius:var(--r);
+  background:var(--surface);color:var(--t1);font-family:inherit;font-size:14px;
+  outline:none;min-height:42px}
+.s-inp:focus{border-color:var(--blue)}
+.rec-list{display:flex;flex-direction:column;gap:7px}
+.rec-item{background:var(--surface);border:1px solid var(--bdr-lt);border-radius:var(--r);
+  padding:11px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;
+  transition:all .15s;box-shadow:var(--sh)}
+.rec-item:hover{border-color:var(--blue);box-shadow:0 0 0 3px rgba(47,109,225,.08)}
+.rec-no{font-size:12px;font-weight:700;color:var(--blue);white-space:nowrap}
+.rec-model{font-weight:700;font-size:14px}
+.rec-prod{font-size:12px;color:var(--t3)}
+.rec-date{font-size:12px;color:var(--t3);margin-left:auto;white-space:nowrap}
+.badge{padding:2px 8px;border-radius:3px;font-size:11px;font-weight:700;white-space:nowrap}
+.badge-pass{background:var(--pass-bg);color:var(--pass);border:1px solid var(--pass-bdr)}
+.badge-fail{background:var(--fail-bg);color:var(--fail);border:1px solid var(--fail-bdr)}
+.badge-none{background:var(--surface2);color:var(--t3);border:1px solid var(--bdr)}
+.rec-del{padding:5px 9px;border-radius:4px;border:1px solid var(--bdr);background:transparent;
+  color:var(--t3);cursor:pointer;font-size:12px;transition:all .14s;flex-shrink:0}
+.rec-del:hover{border-color:var(--fail-bdr);color:var(--fail);background:var(--fail-bg)}
+.empty{text-align:center;padding:48px 20px;color:var(--t3)}
+.empty-ico{font-size:32px;margin-bottom:10px}
+
+/* ── Toast ───────────────────────────────────────── */
+.toast{position:fixed;bottom:72px;left:50%;transform:translateX(-50%) translateY(16px);
+  background:var(--navy);color:#fff;padding:9px 20px;border-radius:20px;
+  font-size:13px;font-weight:600;opacity:0;transition:all .22s;
+  pointer-events:none;z-index:100;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── Utility ─────────────────────────────────────── */
+.no-print{}
+
+/* ── WiFi Sync ───────────────────────────────────── */
+.wifi-section{width:100%;border-top:1px solid var(--bdr-lt);padding-top:10px;margin-top:6px}
+.wifi-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.wifi-label{font-size:11px;font-weight:700;color:var(--t3);white-space:nowrap}
+.wifi-ip-inp{flex:1;min-width:140px;padding:7px 10px;border:1.5px solid var(--bdr);
+  border-radius:var(--r2);background:var(--surface);color:var(--t1);
+  font-family:inherit;font-size:13px;outline:none;transition:border-color .14s;
+  font-variant-numeric:tabular-nums;min-height:36px}
+.wifi-ip-inp:focus{border-color:var(--blue)}
+.wifi-info{font-size:11px;color:var(--t3);margin-top:4px;line-height:1.4}
+.wifi-info.ok{color:var(--pass)}
+.wifi-info.err{color:var(--fail)}
+.desktop-qr-wrap{display:none;margin-top:10px;padding:10px;
+  background:var(--surface2);border-radius:var(--r2);border:1px solid var(--bdr-lt)}
+.desktop-qr-title{font-size:11px;font-weight:700;color:var(--t3);margin-bottom:6px}
+.desktop-qr-url{font-size:13px;font-weight:700;color:var(--blue);
+  letter-spacing:.01em;word-break:break-all;margin-bottom:8px}
+#qr-container canvas{border:3px solid #fff;border-radius:4px}
+
+/* ── Lamp select (내전압) ─────────────────────────── */
+.lamp-opt{display:inline-flex;align-items:center;gap:0;cursor:pointer}
+.lamp-opt input{position:absolute;opacity:0;width:0;height:0}
+.lamp-lbl{padding:4px 10px;border:1.5px solid var(--bdr);border-radius:var(--r2);
+  font-size:12px;font-weight:600;cursor:pointer;transition:.15s}
+.lamp-off{color:var(--pass);border-color:var(--pass-bdr);background:var(--pass-bg)}
+.lamp-on{color:var(--t3);border-color:var(--bdr);background:var(--surface2)}
+.lamp-opt input:checked+.lamp-off{background:var(--pass);color:#fff;border-color:var(--pass)}
+.lamp-opt input:checked+.lamp-on{background:var(--fail);color:#fff;border-color:var(--fail)}
+
+/* ── Model boxes ──────────────────────────────────── */
+.model-box{padding:5px 10px;border:1.5px solid var(--bdr);border-radius:var(--r2);
+  font-size:12px;font-weight:600;cursor:pointer;color:var(--t2);
+  background:var(--surface2);white-space:nowrap;transition:.15s;user-select:none}
+.model-box.sel{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+/* ── CI Photo ────────────────────────────────────── */
+.ci-photo-wrap{position:relative;display:inline-block}
+.ci-photo-wrap img{width:110px;height:90px;object-fit:cover;border-radius:var(--r2);
+  border:1px solid var(--bdr);display:block}
+.ci-photo-del{position:absolute;top:2px;right:2px;background:rgba(0,0,0,.55);
+  color:#fff;border:none;border-radius:50%;width:20px;height:20px;font-size:13px;
+  cursor:pointer;line-height:18px;text-align:center;padding:0}
+.ci-photo-del:hover{background:var(--fail)}
+@media print{.ci-photo-del{display:none!important}
+  #ci-photo-list img{width:90px;height:72px}}
+
+/* ══════════════════════════════════════════════════
+   PRINT STYLES
+   ══════════════════════════════════════════════════ */
+@media print {
+  @page{size:A4;margin:7mm 11mm}
+
+  .hdr,.act-bar,.no-print{display:none!important}
+  body{background:#fff;font-size:8pt;line-height:1.35;color:#000;
+    font-family:'Noto Sans KR','Malgun Gothic',sans-serif}
+  #app{height:auto}
+  .view{padding:0;overflow:visible;flex:none}
+  #view-records{display:none!important}
+
+  /* ── Banner ── */
+  .co-banner{box-shadow:none;border:1.5px solid #888;border-radius:0;
+    padding:5pt 9pt;margin-bottom:4pt;display:flex;align-items:center}
+  .co-logo-wrap{width:40pt;height:30pt;border:none;background:transparent}
+  .co-logo-ph{display:none!important}
+  .co-hint{display:none!important}
+  .co-name-edit{font-size:11pt;border-bottom:none}
+  .co-doc-title{font-size:15pt;font-weight:700;letter-spacing:-.3px}
+  .co-doc-en{font-size:8pt}
+
+  /* ── Cards ── */
+  .card{box-shadow:none;border:1px solid #bbb;margin-bottom:3pt;border-radius:0;
+    overflow:visible;page-break-inside:avoid}
+  .card-hd{padding:2pt 7pt;background:#ebebeb!important;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .card-title{font-size:8.5pt;font-weight:700}
+  .card-title-en{font-size:7.5pt}
+  .sec-num{width:12pt;height:12pt;font-size:7.5pt;
+    background:#444!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .card-body{padding:0}
+
+  /* ── Form header ── */
+  .hdr-grid{grid-template-columns:1fr 1fr;gap:4pt;padding:4pt 6pt}
+  .field{gap:1pt}
+  .lbl{font-size:7pt}
+  .inp{padding:2pt 4pt;font-size:7.5pt;border:1px solid #bbb;min-height:0;border-radius:0}
+  select.inp{-webkit-appearance:none}
+  /* ── Model boxes (print) ── */
+  #model-boxes{flex-wrap:nowrap;gap:2pt;margin-top:2pt}
+  .model-box{padding:1pt 4pt;font-size:6.5pt;border-width:1px;border-radius:2pt;
+    white-space:nowrap;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .model-box.sel{background:#2F6DE1!important;color:#fff!important;border-color:#2F6DE1!important}
+  /* ── Report no / date inline inputs ── */
+  #rno-year{width:42pt!important;font-size:7pt!important;padding:1pt 2pt!important}
+  #rno-seq{width:38pt!important;font-size:7pt!important;padding:1pt 4pt!important}
+
+  /* ── Table cells ── */
+  .itbl th,.itbl td{padding:2pt 4pt;border-bottom:1px solid #ccc}
+  .itbl thead th{background:#f0f0f0!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;font-size:7.5pt}
+  .th-ko{font-size:7.5pt;display:block!important}
+  .th-en{font-size:6.5pt;opacity:.8;display:block!important}
+  .td-ko{font-size:7.5pt;display:block!important}
+  .td-en{font-size:6.5pt;color:#444;display:block!important}
+  .std-ko{font-size:7.5pt;display:block!important}
+  .std-en{font-size:6.5pt;font-style:italic;color:#444;display:block!important}
+  .w-item{min-width:60pt}
+  .w-meth{min-width:55pt}
+  .w-res{min-width:50pt}
+
+  /* ── PF buttons ── */
+  .pf-btn:not(.on){display:none!important}
+  .pf-btn.on{padding:2pt 6pt;font-size:8pt;border-width:1px;min-height:0;border-radius:2pt;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .pf-btn.Y.on{background:var(--pass-bg)!important;color:var(--pass)!important;border-color:var(--pass-bdr)!important}
+  .pf-btn.N.on{background:var(--fail-bg)!important;color:var(--fail)!important;border-color:var(--fail-bdr)!important}
+
+  /* ── Measurements ── */
+  .m-inp{width:48pt;padding:2pt 4pt;font-size:8pt;border:1px solid #bbb;min-height:0;border-radius:0}
+  .m-unit{font-size:7.5pt}
+  .trial-criterion,.trial-criterion-en{font-size:7.5pt}
+  .trial-lbl{font-size:8pt;width:30pt}
+  .trial-tag{font-size:7pt}
+  .trial-row{gap:4pt;flex-wrap:nowrap}
+  .trial-block{gap:3pt}
+
+  /* ── Parts ── */
+  .ptbl th,.ptbl td{padding:3pt 6pt;font-size:8pt}
+  .ptbl th{background:#f0f0f0!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .p-inp{padding:2pt 4pt;font-size:8pt;border:none;min-height:0;border-radius:0}
+  .p-chk{width:12pt;height:12pt;accent-color:#000;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .btn-add-row,.btn-del-row{display:none!important}
+
+  /* ── Notes mirror ── */
+  .note-ta{display:none!important}
+  .note-print{display:block!important;border:1px solid #bbb;padding:5pt 7pt;
+    min-height:60pt;font-size:8pt;line-height:1.5;
+    white-space:pre-wrap;word-break:break-all;font-family:'Noto Sans KR','Malgun Gothic',sans-serif}
+
+  /* ── Big PF ── */
+  .big-pf-btn:not(.on){display:none!important}
+  .big-pf-btn.on{padding:6pt 12pt;font-size:11pt;border-width:1.5px;min-height:0;
+    border-radius:3pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .big-pf-btn.P.on{background:#e6f4ee!important;color:#1a7a50!important;border-color:#1a7a50!important}
+  .big-pf-btn.F.on{background:#fdecea!important;color:#c8311f!important;border-color:#c8311f!important}
+  .btn-en{font-size:8pt!important}
+  .card-body.footer-body{padding:7pt}
+
+  /* ── Signature ── */
+  .sig-pair{display:grid;grid-template-columns:1fr 1fr;gap:10pt;margin-top:8pt}
+  .sig-canvas{display:none!important}
+  .sig-clear-btn{display:none!important}
+  .sig-hint{display:none!important}
+  .sig-img-disp{display:block!important;height:55pt;border:1px solid #bbb;background:#fff}
+  .sig-name-inp{padding:1pt 4pt;font-size:8pt;border:1px solid #bbb;min-height:0;border-radius:0}
+  .sig-box{border:1px solid #bbb;background:#fff}
+  .sig-name-row{margin-bottom:3pt}
+
+  /* ── Page break — Section 4 starts page 2 ── */
+  #card-s4{page-break-before:always}
+
+  /* ── Page 3 — Parts record ── */
+  .card-parts{page-break-before:always}
+
+  /* ── Bigo canvas (print) ── */
+  .bigo-canvas{display:none!important}
+  .bigo-hint{display:none!important}
+  .bigo-clear-btn{display:none!important}
+  .bigo-img-disp{display:block!important;width:100%;min-height:120pt;
+    border:1px solid #bbb;background:#fff;object-fit:contain}
+  .bigo-box{border:1px solid #bbb;background:#fff}
+  .bigo-note-print{display:block!important;border:1px solid #bbb;padding:5pt 7pt;
+    min-height:40pt;font-size:8pt;line-height:1.5;
+    white-space:pre-wrap;word-break:break-all;font-family:'Noto Sans KR','Malgun Gothic',sans-serif}
+  .bigo-note-ta{display:none!important}
+}
+
+/* ── F7141 custom additions ── */
+.fld{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--t2)}
+.fld input,.fld-inp{padding:8px 10px;border:1.5px solid var(--bdr);border-radius:var(--r2);
+  font-size:13px;font-family:inherit;background:var(--surface);color:var(--t1)}
+.fld input:focus,.fld-inp:focus{outline:none;border-color:var(--blue)}
+.fld-label{font-size:12px;color:var(--t2);font-weight:600}
+.pf-table{display:flex;flex-direction:column}
+.pf-row{display:flex;align-items:center;gap:12px;padding:10px 14px;
+  border-bottom:1px solid var(--bdr-lt)}
+.pf-row:last-child{border-bottom:none}
+.pf-label{flex:1;font-size:12.5px;color:var(--t1);line-height:1.4}
+.pf-note{width:150px;flex-shrink:0;padding:6px 8px;border:1.5px solid var(--bdr);
+  border-radius:var(--r2);font-size:12px;font-family:inherit;background:var(--surface);color:var(--t1)}
+.pf2{display:flex;gap:4px}
+.chk-group{display:flex;flex-wrap:wrap;gap:6px 16px}
+.chk-group label{display:flex;align-items:center;gap:5px;font-size:12.5px;color:var(--t1);cursor:pointer}
+.chk-group input[type="checkbox"]{width:18px;height:18px;accent-color:var(--blue);cursor:pointer}
+.sig-block-hd{font-size:12.5px;font-weight:700;color:var(--t1);margin-bottom:8px}
+
+@media print{
+  .pf-row{padding:3pt 6pt;border-bottom:0.5px solid #ccc}
+  .pf-label{font-size:8pt}
+  .pf-note{width:80pt;font-size:7.5pt;padding:1pt 3pt}
+  .chk-group{font-size:8pt}
+  .chk-group input[type="checkbox"]{width:9pt;height:9pt}
+  .fld input,.fld-inp{font-size:8pt;padding:2pt 4pt;border:0.5px solid #999}
+  .fld{font-size:7.5pt}
+  .sig-block-hd{font-size:8pt}
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- ── TOP NAV ──────────────────────────────────── -->
+<header class="hdr">
+  <div class="hdr-brand">F7141 <em>설치완료보고서</em></div>
+  <nav class="hdr-nav">
+    <button class="tab-btn on" id="tab-form"    onclick="switchView('form')">📋 보고서 작성</button>
+    <button class="tab-btn"    id="tab-records" onclick="switchView('records')">📂 기록 조회</button>
+  </nav>
+</header>
+
+<!-- ══ FORM VIEW ════════════════════════════════════ -->
+<div id="view-form" class="view">
+
+  <!-- 회사 배너 -->
+  <div class="co-banner">
+    <div class="co-logo-wrap" onclick="document.getElementById('logo-file').click()" title="클릭하여 로고 업로드 / Click to upload logo">
+      <img id="co-logo-img" src="" alt="" style="display:none;width:100%;height:100%;object-fit:contain">
+      <span class="co-logo-ph no-print" id="co-logo-ph" style="font-size:10px;color:var(--t3);text-align:center;padding:2px">로고<br>Logo</span>
+    </div>
+    <input type="file" id="logo-file" accept="image/*" style="display:none" onchange="handleLogo(this)">
+    <div class="co-info">
+      <input class="co-name-edit" id="co-name" value="HS Clave" spellcheck="false"
+             oninput="saveCompanyInfo()" placeholder="회사명">
+      <div class="co-hint no-print" style="font-size:11px;color:var(--t3)">회사명 클릭하여 수정 / Click to edit</div>
+    </div>
+    <div class="co-doc-wrap">
+      <div class="co-doc-title">설치완료보고서</div>
+      <div class="co-doc-en">Installation Completion Report</div>
+    </div>
+  </div>
+
+  <!-- 1. 기본 정보 -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="card-title">1. 기본 정보 <span class="card-title-en">/ Basic Information</span></div>
+    </div>
+    <div class="card-body">
+      <div class="hdr-grid">
+        <div class="field">
+          <label class="lbl">보고서 번호 <span class="lbl-en">Report No.</span></label>
+          <div style="display:flex;align-items:center;gap:4px;flex-wrap:nowrap">
+            <span style="font-size:13px;color:var(--t2);white-space:nowrap">HSICR-</span>
+            <select id="rno-year" style="width:58px;padding:4px 2px;border:1.5px solid var(--bdr);border-radius:var(--r2);background:var(--surface);color:var(--t1);font-size:13px" onchange="composeReportNo()"></select>
+            <span style="font-size:13px;color:var(--t2)">-</span>
+            <input id="rno-seq" type="text" inputmode="numeric" maxlength="4" placeholder="0001"
+              style="width:60px;padding:4px 6px;border:1.5px solid var(--bdr);border-radius:var(--r2);background:var(--surface);color:var(--t1);font-size:13px;text-align:center"
+              oninput="composeReportNo()">
+          </div>
+        </div>
+        <div class="field">
+          <label class="lbl">계약/주문 번호 <span class="lbl-en">Contract / Order No.</span></label>
+          <input class="inp" data-f="contractNo">
+        </div>
+        <div class="field">
+          <label class="lbl">고객(병원)명 <span class="lbl-en">Customer</span></label>
+          <input class="inp" data-f="custName" placeholder="예: 서울OO병원">
+        </div>
+        <div class="field">
+          <label class="lbl">설치 장소 <span class="lbl-en">Installation Site</span></label>
+          <input class="inp" data-f="installLoc" placeholder="예: 중앙공급실">
+        </div>
+        <div class="field" style="grid-column:1/-1">
+          <label class="lbl">주소 <span class="lbl-en">Address</span></label>
+          <input class="inp" data-f="address" placeholder="설치 현장 주소">
+        </div>
+        <div class="field">
+          <label class="lbl">고객 담당자 <span class="lbl-en">Contact Person</span></label>
+          <input class="inp" data-f="custContact">
+        </div>
+        <div class="field">
+          <label class="lbl">연락처 <span class="lbl-en">Phone</span></label>
+          <input class="inp" data-f="custPhone" type="tel" placeholder="010-0000-0000">
+        </div>
+        <div class="field">
+          <label class="lbl">설치 일자 <span class="lbl-en">Installation Date</span></label>
+          <input class="inp" data-f="installDate" type="date">
+        </div>
+        <div class="field">
+          <label class="lbl">설치 완료 시각 <span class="lbl-en">Completion Time</span></label>
+          <input class="inp" data-f="completeTime" type="time">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. 제품 정보 -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="card-title">2. 제품 정보 <span class="card-title-en">/ Product Information</span></div>
+    </div>
+    <div class="card-body">
+      <div class="hdr-grid">
+        <div class="field">
+          <label class="lbl">제품명 <span class="lbl-en">Product Name</span></label>
+          <input class="inp" data-f="prodName" placeholder="고압증기멸균기 (APOLLON 시리즈)">
+        </div>
+        <div class="field" style="min-width:220px">
+          <label class="lbl">모델명 <span class="lbl-en">Model</span></label>
+          <div id="model-boxes" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px"></div>
+        </div>
+        <div class="field">
+          <label class="lbl">일련번호 <span class="lbl-en">Serial No.</span></label>
+          <input class="inp" data-f="serialNo" placeholder="S/N">
+        </div>
+        <div class="field">
+          <label class="lbl">제조일자 <span class="lbl-en">Mfg. Date</span></label>
+          <input class="inp" data-f="mfgDate" type="month">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. 설치 전 점검 -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="card-title">3. 설치 전 점검 <span class="card-title-en">/ Pre-Installation Check</span></div>
+    </div>
+    <div class="card-body pf-table" style="padding:0">
+      <div class="pf-row">
+        <div class="pf-label">설치 장소의 전원 사양(전압/주파수/용량) 및 전용 배선·접지 상태 확인</div>
+        <div class="pf" data-group="p1_1"></div>
+        <input class="pf-note" data-f="p1_1_note" placeholder="비고">
+      </div>
+      <div class="pf-row">
+        <div class="pf-label">설치 공간(수평, 환기, 이격 거리 등) 적정성 확인</div>
+        <div class="pf" data-group="p1_2"></div>
+        <input class="pf-note" data-f="p1_2_note" placeholder="비고">
+      </div>
+      <div class="pf-row">
+        <div class="pf-label">제품 외관 손상 여부 및 구성품(부속품) 누락 여부 확인</div>
+        <div class="pf" data-group="p1_3"></div>
+        <input class="pf-note" data-f="p1_3_note" placeholder="비고">
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. 설치 및 시운전 내용 -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="card-title">4. 설치 및 시운전 내용 <span class="card-title-en">/ Installation &amp; Commissioning</span></div>
+    </div>
+    <div class="card-body pf-table" style="padding:0">
+      <div class="pf-row">
+        <div class="pf-label">제품 수평 설치 및 고정</div>
+        <div class="pf" data-group="p2_1"></div>
+        <input class="pf-note" data-f="p2_1_note" placeholder="비고">
+      </div>
+      <div class="pf-row">
+        <div class="pf-label">전원 연결 및 접지 확인</div>
+        <div class="pf" data-group="p2_2"></div>
+        <input class="pf-note" data-f="p2_2_note" placeholder="비고">
+      </div>
+      <div class="pf-row">
+        <div class="pf-label">전원 인가 후 초기 기동(부팅) 정상 여부 확인</div>
+        <div class="pf" data-group="p2_3"></div>
+        <input class="pf-note" data-f="p2_3_note" placeholder="비고">
+      </div>
+      <div class="pf-row">
+        <div class="pf-label">시운전 사이클 실시 (멸균 모드 1회 이상 수행)</div>
+        <div class="pf" data-group="p2_4"></div>
+        <input class="pf-note" data-f="p2_4_note" placeholder="비고">
+      </div>
+      <div class="pf-row">
+        <div class="pf-label">시운전 중 압력·온도 표시 및 자동 단계 진행(선진공/가열/멸균/배기/건조) 정상 여부 확인</div>
+        <div class="pf" data-group="p2_5"></div>
+        <input class="pf-note" data-f="p2_5_note" placeholder="비고">
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. 기능 확인 및 성능 점검 -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="card-title">5. 기능 확인 및 성능 점검 <span class="card-title-en">/ Function &amp; Performance Check</span></div>
+    </div>
+    <div class="card-body pf-table" style="padding:0">
+      <div class="pf-row">
+        <div class="pf-label">키패드 조작 정상 여부</div>
+        <div class="pf" data-group="p3_1"></div>
+        <input class="pf-note" data-f="p3_1_note" placeholder="비고">
+      </div>
+      <div class="pf-row">
+        <div class="pf-label">도어 개폐 정상 여부</div>
+        <div class="pf" data-group="p3_2"></div>
+        <input class="pf-note" data-f="p3_2_note" placeholder="비고">
+      </div>
+      <div class="pf-row">
+        <div class="pf-label">압력계 지침 정상 복귀(0.0 kgf/cm²) 여부</div>
+        <div class="pf" data-group="p3_3"></div>
+        <input class="pf-note" data-f="p3_3_note" placeholder="비고">
+      </div>
+      <div class="pf-row">
+        <div class="pf-label">이상 발생 시 경보(부저) 및 오류 표시 정상 여부</div>
+        <div class="pf" data-group="p3_4"></div>
+        <input class="pf-note" data-f="p3_4_note" placeholder="비고">
+      </div>
+      <div class="pf-row">
+        <div class="pf-label">진공시험</div>
+        <div class="pf" data-group="p3_5"></div>
+        <input class="pf-note" data-f="p3_5_note" placeholder="비고">
+      </div>
+      <div class="pf-row">
+        <div class="pf-label">누수 및 이상 소음·진동 유무</div>
+        <div class="pf" data-group="p3_6"></div>
+        <input class="pf-note" data-f="p3_6_note" placeholder="비고">
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. 사용자 교육 -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="card-title">6. 사용자 교육 <span class="card-title-en">/ User Training</span></div>
+    </div>
+    <div class="card-body" style="display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <label class="lbl" style="margin:0">교육 실시 여부 <span class="lbl-en">Training Conducted</span></label>
+        <div class="pf2" data-bgroup="eduDone" data-labels="실시,미실시"></div>
+        <input class="inp" data-f="eduReason" placeholder="미실시 사유" style="flex:1;min-width:180px">
+      </div>
+      <div class="field" style="max-width:340px">
+        <label class="lbl">교육 대상자 <span class="lbl-en">Trainees</span></label>
+        <input class="inp" data-f="eduTarget">
+      </div>
+      <div class="field">
+        <label class="lbl">교육 내용 <span class="lbl-en">Training Content</span></label>
+        <div class="chk-group" id="chk-eduContent" style="margin-top:4px">
+          <label><input type="checkbox" data-cf="eduContent" value="동작 순서">동작 순서</label>
+          <label><input type="checkbox" data-cf="eduContent" value="멸균 모드 선택">멸균 모드 선택</label>
+          <label><input type="checkbox" data-cf="eduContent" value="주의사항">주의사항</label>
+          <label><input type="checkbox" data-cf="eduContent" value="세척 및 관리">세척 및 관리</label>
+          <label><input type="checkbox" data-cf="eduContent" value="오류 발생 시 조치 방법">오류 발생 시 조치 방법</label>
+        </div>
+      </div>
+      <div class="field">
+        <label class="lbl">제공 자료 <span class="lbl-en">Materials Provided</span></label>
+        <div class="chk-group" id="chk-eduMaterial" style="margin-top:4px">
+          <label><input type="checkbox" data-cf="eduMaterial" value="사용설명서">사용설명서</label>
+          <label><input type="checkbox" data-cf="eduMaterial" value="간단 조작 가이드">간단 조작 가이드</label>
+          <label><input type="checkbox" data-cf="eduMaterial" value="보증서">보증서</label>
+          <label><input type="checkbox" data-cf="eduMaterial" value="기타">기타</label>
+        </div>
+        <input class="inp" data-f="eduMaterialEtc" placeholder="기타 자료명" style="margin-top:8px;max-width:340px">
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. 특이사항 및 조치사항 -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="card-title">7. 특이사항 및 조치사항 <span class="card-title-en">/ Notes &amp; Actions Taken</span></div>
+    </div>
+    <div class="card-body">
+      <textarea class="inp" data-f="notes" rows="4" style="width:100%;resize:vertical;line-height:1.6" placeholder="특이사항, 조치 내역을 입력하세요"></textarea>
+    </div>
+  </div>
+
+  <!-- 8. 종합 판정 -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="card-title">8. 종합 판정 <span class="card-title-en">/ Overall Result</span></div>
+    </div>
+    <div class="card-body">
+      <p style="font-size:13px;color:var(--t2);margin:0 0 10px">상기 내용에 따라 설치 및 시운전을 완료하였으며, 그 결과는 다음과 같습니다.</p>
+      <div class="big-pf-wrap" style="display:flex;gap:10px">
+        <button class="big-pf-btn P" data-bgroup="overallResult" data-bval="Y">✔ 적합<span class="btn-en">정상 사용 가능</span></button>
+        <button class="big-pf-btn F" data-bgroup="overallResult" data-bval="N">✘ 부적합<span class="btn-en">후속 조치 필요</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9. 고객 확인 -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="card-title">9. 고객 확인 <span class="card-title-en">/ Customer Confirmation</span></div>
+    </div>
+    <div class="card-body footer-body">
+      <p style="font-size:12.5px;color:var(--t2);line-height:1.6;margin:0 0 12px">
+        본인은 상기 제품의 설치, 시운전 및 기능 확인이 정상적으로 완료되었음을 확인하였으며,
+        제품의 사용 방법, 주의사항 및 유지관리(세척·A/S 요청 절차 등)에 대한 안내를 받았음을 확인합니다.
+      </p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px 20px">
+        <div>
+          <div class="sig-block-hd">고객 확인자 <span class="lbl-en" style="font-weight:400">Customer</span></div>
+          <div class="field" style="margin-bottom:7px">
+            <label class="lbl">성명 <span class="lbl-en">Name</span></label>
+            <input class="inp" data-f="custSignerName">
+          </div>
+          <div class="field" style="margin-bottom:7px">
+            <label class="lbl">직책 <span class="lbl-en">Title</span></label>
+            <input class="inp" data-f="custSignerTitle">
+          </div>
+          <div class="field" style="margin-bottom:9px">
+            <label class="lbl">서명 일자 <span class="lbl-en">Date</span></label>
+            <input class="inp" data-f="custSignDate" type="date">
+          </div>
+          <div class="sig-box">
+            <canvas class="sig-canvas" id="sig-customer" width="500" height="120"></canvas>
+            <img class="sig-img-disp" id="sig-customer-img" alt="signature">
+            <div class="sig-hint">✍ 여기에 서명 / Sign here</div>
+            <button class="sig-clear-btn no-print" onclick="clearSig('customer')">지우기 / Clear</button>
+          </div>
+        </div>
+        <div>
+          <div class="sig-block-hd">당사 설치담당자 <span class="lbl-en" style="font-weight:400">Installer</span></div>
+          <div class="field" style="margin-bottom:7px">
+            <label class="lbl">성명 <span class="lbl-en">Name</span></label>
+            <input class="inp" data-f="installerName">
+          </div>
+          <div class="field" style="margin-bottom:7px">
+            <label class="lbl">소속 <span class="lbl-en">Department</span></label>
+            <input class="inp" data-f="installerDept">
+          </div>
+          <div class="field" style="margin-bottom:9px">
+            <label class="lbl">서명 일자 <span class="lbl-en">Date</span></label>
+            <input class="inp" data-f="installerSignDate" type="date">
+          </div>
+          <div class="sig-box">
+            <canvas class="sig-canvas" id="sig-installer" width="500" height="120"></canvas>
+            <img class="sig-img-disp" id="sig-installer-img" alt="signature">
+            <div class="sig-hint">✍ 여기에 서명 / Sign here</div>
+            <button class="sig-clear-btn no-print" onclick="clearSig('installer')">지우기 / Clear</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<!-- ══ /FORM VIEW ═══════════════════════════════════ -->
+
+<!-- ══ RECORDS VIEW ═════════════════════════════════ -->
+<div id="view-records" class="view off">
+  <div class="rec-hdr">
+    <input id="search" placeholder="🔍 보고서번호 / 고객명 / 모델명 / S/N / 계약번호 검색" oninput="renderRecords()">
+  </div>
+  <div class="rec-list" id="rec-list"></div>
+</div>
+
+<!-- ── ACTION BAR (form) ──────────────────────────── -->
+<div class="act-bar" id="form-act">
+  <button class="btn btn-primary" onclick="newForm()">+ 새 보고서</button>
+  <div style="flex:1"></div>
+  <button class="btn btn-sec" onclick="exportPrint()">🖨 인쇄</button>
+  <button class="btn btn-sec" onclick="exportPDF()">📄 PDF 저장</button>
+  <button class="btn btn-primary ml-auto" onclick="saveRecord()">💾 저장</button>
+</div>
+
+<!-- ── ACTION BAR (records) ───────────────────────── -->
+<div class="act-bar off" id="rec-act" style="flex-wrap:wrap;gap:8px 12px;align-items:flex-start;padding:10px 16px">
+  <div style="display:flex;flex-direction:column;gap:6px;flex:1;min-width:0">
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <button class="btn btn-sec" onclick="backupAll()">💾 백업</button>
+      <button class="btn btn-sec" onclick="setBackupDir()" id="btn-set-path">📁 경로 설정</button>
+      <button class="btn btn-sec" onclick="openBackupFile()">📂 불러오기</button>
+      <button class="btn btn-sec" style="color:var(--fail);border-color:var(--fail-bdr)" onclick="resetAllRecords()">🗑 전체 삭제</button>
+      <input type="file" id="restore-input" accept=".json" style="display:none" onchange="restoreFromInput(this)">
+    </div>
+    <div style="font-size:11px;color:var(--t3);display:flex;align-items:center;gap:4px;min-width:0">
+      <span>📁</span>
+      <span id="backup-path-disp" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">기본 다운로드 폴더 / Default Downloads</span>
+    </div>
+  </div>
+  <div style="font-size:12px;color:var(--t3);align-self:center;white-space:nowrap">
+    총 <strong id="rec-count">0</strong>건
+  </div>
+
+  <!-- WiFi Sync Section -->
+  <div class="wifi-section" id="wifi-section">
+    <div class="wifi-row">
+      <span class="wifi-label">📡 WiFi 동기화</span>
+      <input class="wifi-ip-inp" id="wifi-ip" type="text" placeholder="데스크탑 IP (예: 192.168.1.10)" oninput="saveWifiIP()">
+      <button class="btn btn-sm" onclick="wifiSync()" style="background:var(--blue);color:#fff;border-color:var(--blue)">동기화</button>
+      <span class="wifi-info" id="wifi-status"></span>
+    </div>
+    <div class="desktop-qr-wrap" id="desktop-qr-wrap" style="display:none">
+      <div class="desktop-qr-title" id="qr-url-title">📱 태블릿에서 앱 설치</div>
+      <div id="qr-container"></div>
+      <div class="desktop-qr-url" id="qr-url-text"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+</div>
+<script>
+// ── Constants ──────────────────────────────────────────
+const DB='f7141_install_v1', CO_KEY='f7141_co_v1';
+const MODELS=['APOLLON 2350V','APOLLON 2330V','APOLLON 2322V','APOLLON 2318V'];
+const PF_GROUPS=['p1_1','p1_2','p1_3',
+  'p2_1','p2_2','p2_3','p2_4','p2_5',
+  'p3_1','p3_2','p3_3','p3_4','p3_5','p3_6'];
+const DATA_FIELDS=['custName','installLoc','address','custContact','custPhone',
+  'installDate','completeTime','contractNo',
+  'prodName','modelName','serialNo','mfgDate',
+  'p1_1_note','p1_2_note','p1_3_note',
+  'p2_1_note','p2_2_note','p2_3_note','p2_4_note','p2_5_note',
+  'p3_1_note','p3_2_note','p3_3_note','p3_4_note','p3_5_note','p3_6_note',
+  'eduReason','eduTarget','eduMaterialEtc','notes',
+  'custSignerName','custSignerTitle','custSignDate',
+  'installerName','installerDept','installerSignDate','reportNo'];
+const CHK_GROUPS=['eduContent','eduMaterial'];
+const SIG_IDS=['customer','installer'];
+
+// ── State ──────────────────────────────────────────────
+let records=[], cur=null;
+function loadDB(){try{records=JSON.parse(localStorage.getItem(DB)||'[]')}catch{records=[]}}
+function saveDB(){localStorage.setItem(DB,JSON.stringify(records))}
+function today(){return new Date().toISOString().slice(0,10)}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function esc(s){return (s||'').toString().replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+function mkRecord(){
+  const yy=new Date().getFullYear().toString().slice(-2);
+  const r={id:uid(),createdAt:new Date().toISOString(),ts:Date.now(),
+    reportNo:`HSICR-${yy}-`,
+    installDate:today(),completeTime:'',custSignDate:today(),installerSignDate:today(),
+    prodName:'고압증기멸균기 (APOLLON 시리즈)',modelName:'',
+    eduDone:'',overallResult:'',
+    customer_sig:'',installer_sig:''};
+  PF_GROUPS.forEach(g=>r[g]='');
+  DATA_FIELDS.forEach(f=>{if(!(f in r))r[f]=''});
+  CHK_GROUPS.forEach(c=>{r[c]=[]});
+  return r;
+}
+
+// ── 보고서 번호 (HSICR-YY-NNNN) ─────────────────────────
+function initReportNoUI(){
+  const sel=document.getElementById('rno-year');
+  if(!sel)return;
+  sel.innerHTML='';
+  const curYY=new Date().getFullYear();
+  for(let y=curYY-1;y<=curYY+3;y++){
+    const opt=document.createElement('option');
+    opt.value=String(y).slice(-2);
+    opt.textContent=String(y).slice(-2);
+    if(y===curYY)opt.selected=true;
+    sel.appendChild(opt);
+  }
+}
+function composeReportNo(){
+  const yy=document.getElementById('rno-year').value;
+  const seq=document.getElementById('rno-seq').value.trim();
+  if(cur)cur.reportNo=`HSICR-${yy}-${seq}`;
+}
+function loadReportNoToUI(reportNo){
+  if(!reportNo)return;
+  const m=reportNo.match(/^HSICR-(\d{2})-(.*)$/);
+  if(m){
+    const sel=document.getElementById('rno-year');
+    if(sel)[...sel.options].forEach(o=>{if(o.value===m[1])o.selected=true});
+    const seq=document.getElementById('rno-seq');
+    if(seq)seq.value=m[2];
+  }
+}
+
+// ── 모델 선택 박스 ───────────────────────────────────────
+function initModelBoxes(){
+  const wrap=document.getElementById('model-boxes');
+  if(!wrap)return;
+  wrap.innerHTML='';
+  MODELS.forEach(m=>{
+    const box=document.createElement('div');
+    box.className='model-box';
+    box.textContent=m;
+    if(cur&&cur.modelName===m)box.classList.add('sel');
+    box.onclick=()=>{
+      wrap.querySelectorAll('.model-box').forEach(b=>b.classList.remove('sel'));
+      box.classList.add('sel');
+      if(cur)cur.modelName=m;
+    };
+    wrap.appendChild(box);
+  });
+}
+
+// ── 회사 정보 (로고 / 회사명) ────────────────────────────
+function loadCompanyInfo(){
+  try{
+    const co=JSON.parse(localStorage.getItem(CO_KEY)||'{}');
+    if(co.name)document.getElementById('co-name').value=co.name;
+    if(co.logo){
+      const img=document.getElementById('co-logo-img');
+      const ph=document.getElementById('co-logo-ph');
+      img.src=co.logo;img.style.display='block';
+      if(ph)ph.style.display='none';
+    }
+  }catch{}
+}
+function saveCompanyInfo(){
+  const name=document.getElementById('co-name').value;
+  const img=document.getElementById('co-logo-img');
+  try{localStorage.setItem(CO_KEY,JSON.stringify({name,logo:img.src||''}))}catch{}
+}
+function handleLogo(input){
+  const file=input.files[0];if(!file)return;
+  const fr=new FileReader();
+  fr.onload=e=>{
+    const img=document.getElementById('co-logo-img');
+    const ph=document.getElementById('co-logo-ph');
+    img.src=e.target.result;img.style.display='block';
+    if(ph)ph.style.display='none';
+    saveCompanyInfo();
+  };
+  fr.readAsDataURL(file);input.value='';
+}
+
+// ── PF toggles (적합/부적합) ─────────────────────────────
+function buildPF(g){
+  document.querySelectorAll(`.pf[data-group="${g}"]`).forEach(w=>{
+    w.innerHTML='';
+    [{v:'Y',ko:'적합',en:'Pass'},{v:'N',ko:'부적합',en:'Fail'}].forEach(({v,ko,en})=>{
+      const b=document.createElement('button');
+      b.className=`pf-btn ${v}`;b.type='button';
+      b.innerHTML=`${ko} <small style="font-size:10px;opacity:.75">${en}</small>`;
+      b.dataset.group=g;b.dataset.v=v;
+      b.onclick=()=>setPF(g,v);
+      w.appendChild(b);
+    });
+  });
+}
+function refreshPF(g){
+  document.querySelectorAll(`.pf-btn[data-group="${g}"]`).forEach(b=>{
+    b.classList.toggle('on',b.dataset.v===cur[g]);
+  });
+}
+function setPF(g,v){
+  if(!cur)return;
+  cur[g]=(cur[g]===v)?'':v;
+  refreshPF(g);
+}
+
+// ── Generic 2-state toggle (실시/미실시, 적합/부적합 판정 등) ──
+function buildPF2(el){
+  const group=el.dataset.bgroup;
+  const labels=(el.dataset.labels||'Y,N').split(',');
+  el.innerHTML='';
+  [{v:'Y',ko:labels[0]},{v:'N',ko:labels[1]}].forEach(({v,ko})=>{
+    const b=document.createElement('button');
+    b.className='pf-btn';b.type='button';
+    b.textContent=ko;
+    b.dataset.bgroup=group;b.dataset.bval=v;
+    b.onclick=()=>{cur[group]=(cur[group]===v)?'':v;refreshPF2()};
+    el.appendChild(b);
+  });
+}
+function refreshPF2(){
+  document.querySelectorAll('.pf2 .pf-btn').forEach(b=>{
+    b.classList.toggle('on',b.dataset.bval===cur[b.dataset.bgroup]);
+  });
+}
+document.querySelectorAll('.big-pf-btn[data-bgroup]').forEach(b=>{
+  b.addEventListener('click',()=>{
+    const g=b.dataset.bgroup,v=b.dataset.bval;
+    cur[g]=(cur[g]===v)?'':v;
+    refreshBigPF();
+  });
+});
+function refreshBigPF(){
+  document.querySelectorAll('.big-pf-btn[data-bgroup]').forEach(b=>{
+    b.classList.toggle('on',b.dataset.bval===cur[b.dataset.bgroup]);
+  });
+}
+
+// ── Checkbox groups (교육 내용 / 제공 자료) ──────────────
+function buildChkGroups(){
+  CHK_GROUPS.forEach(cf=>{
+    document.querySelectorAll(`input[type="checkbox"][data-cf="${cf}"]`).forEach(chk=>{
+      chk.checked=(cur[cf]||[]).includes(chk.value);
+      chk.onchange=()=>{
+        const box=document.querySelectorAll(`input[type="checkbox"][data-cf="${cf}"]`);
+        cur[cf]=[...box].filter(b=>b.checked).map(b=>b.value);
+      };
+    });
+  });
+}
+
+// ── Signature pads ───────────────────────────────────────
+const sigState={};
+function initSigPads(){SIG_IDS.forEach(id=>initSigPad(id))}
+function initSigPad(id){
+  const canvas=document.getElementById(`sig-${id}`);
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#111';ctx.lineWidth=2.2;
+  sigState[id]={drawing:false};
+  function getXY(e){
+    const rect=canvas.getBoundingClientRect();
+    const scaleX=canvas.width/rect.width,scaleY=canvas.height/rect.height;
+    const src=e.touches?e.touches[0]:e;
+    return{x:(src.clientX-rect.left)*scaleX,y:(src.clientY-rect.top)*scaleY};
+  }
+  canvas.addEventListener('pointerdown',e=>{
+    e.preventDefault();canvas.setPointerCapture(e.pointerId);
+    sigState[id].drawing=true;
+    const{x,y}=getXY(e);
+    ctx.beginPath();ctx.moveTo(x,y);
+    const hint=canvas.parentElement.querySelector('.sig-hint');
+    if(hint)hint.style.display='none';
+  },{passive:false});
+  canvas.addEventListener('pointermove',e=>{
+    e.preventDefault();
+    if(!sigState[id].drawing)return;
+    const{x,y}=getXY(e);
+    ctx.lineTo(x,y);ctx.stroke();ctx.beginPath();ctx.moveTo(x,y);
+  },{passive:false});
+  canvas.addEventListener('pointerup',e=>{
+    e.preventDefault();
+    if(!sigState[id].drawing)return;
+    sigState[id].drawing=false;ctx.beginPath();saveSigData(id);
+  },{passive:false});
+  canvas.addEventListener('pointercancel',()=>{sigState[id].drawing=false;ctx.beginPath()});
+  canvas.style.touchAction='none';
+}
+function saveSigData(id){
+  const canvas=document.getElementById(`sig-${id}`);
+  if(!canvas||!cur)return;
+  cur[`${id}_sig`]=canvas.toDataURL('image/png');
+}
+function clearSig(id){
+  const canvas=document.getElementById(`sig-${id}`);
+  if(!canvas)return;
+  canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);
+  if(cur)cur[`${id}_sig`]='';
+  const hint=canvas.parentElement.querySelector('.sig-hint');
+  if(hint)hint.style.display='';
+  const img=document.getElementById(`sig-${id}-img`);
+  if(img)img.removeAttribute('src');
+}
+function loadSigToCanvas(id){
+  const canvas=document.getElementById(`sig-${id}`);
+  if(!canvas||!cur)return;
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  const hint=canvas.parentElement.querySelector('.sig-hint');
+  const data=cur[`${id}_sig`];
+  const img=document.getElementById(`sig-${id}-img`);
+  if(data){
+    const im=new Image();
+    im.onload=()=>ctx.drawImage(im,0,0,canvas.width,canvas.height);
+    im.src=data;
+    if(hint)hint.style.display='none';
+    if(img)img.src=data;
+  }else{
+    if(hint)hint.style.display='';
+    if(img)img.removeAttribute('src');
+  }
+}
+
+// ── Form binding ───────────────────────────────────────
+function populateForm(){
+  document.querySelectorAll('[data-f]').forEach(el=>el.value=cur[el.dataset.f]||'');
+  loadReportNoToUI(cur.reportNo);
+  initModelBoxes();
+  PF_GROUPS.forEach(g=>{buildPF(g);refreshPF(g)});
+  document.querySelectorAll('.pf2[data-bgroup]').forEach(el=>buildPF2(el));
+  refreshPF2();
+  refreshBigPF();
+  buildChkGroups();
+  SIG_IDS.forEach(id=>loadSigToCanvas(id));
+}
+
+document.getElementById('view-form').addEventListener('input',e=>{
+  if(!cur)return;
+  if(e.target.dataset.f)cur[e.target.dataset.f]=e.target.value;
+});
+
+// ── CRUD ───────────────────────────────────────────────
+function switchView(v){
+  document.getElementById('view-form').classList.toggle('off',v!=='form');
+  document.getElementById('view-records').classList.toggle('off',v!=='records');
+  document.getElementById('form-act').classList.toggle('off',v!=='form');
+  document.getElementById('rec-act').classList.toggle('off',v!=='records');
+  document.getElementById('tab-form').classList.toggle('on',v==='form');
+  document.getElementById('tab-records').classList.toggle('on',v==='records');
+  if(v==='records'){loadDB();renderRecords();updateRecCount()}
+}
+function newForm(){cur=mkRecord();populateForm();switchView('form')}
+function saveRecord(){
+  SIG_IDS.forEach(id=>saveSigData(id));
+  cur.ts=Date.now();
+  const idx=records.findIndex(r=>r.id===cur.id);
+  if(idx>=0)records[idx]=cur;else records.unshift(cur);
+  saveDB();updateRecCount();toast('저장되었습니다 ✓  / Saved');
+}
+function loadRecord(id){
+  const r=records.find(r=>r.id===id);if(!r)return;
+  cur=JSON.parse(JSON.stringify(r));
+  CHK_GROUPS.forEach(c=>{if(!Array.isArray(cur[c]))cur[c]=[]});
+  populateForm();switchView('form');
+}
+function deleteRecord(id){
+  const idx=records.findIndex(r=>r.id===id);
+  if(idx>=0){records[idx].deleted=true;records[idx].ts=Date.now();}
+  if(cur?.id===id)cur=mkRecord();
+  saveDB();updateRecCount();renderRecords();toast('삭제됨 / Deleted');
+}
+function resetAllRecords(){
+  if(!confirm('모든 기록을 삭제합니다. 계속하시겠습니까?\nDelete all records. Are you sure?'))return;
+  records.splice(0,records.length);
+  saveDB();updateRecCount();renderRecords();
+  toast('전체 삭제 완료 / All records deleted');
+}
+
+function renderRecords(){
+  const q=(document.getElementById('search').value||'').toLowerCase();
+  const list=document.getElementById('rec-list');
+  const active=records.filter(r=>!r.deleted);
+  const fil=active.filter(r=>!q||
+    (r.reportNo||'').toLowerCase().includes(q)||
+    (r.custName||'').toLowerCase().includes(q)||
+    (r.modelName||'').toLowerCase().includes(q)||
+    (r.serialNo||'').toLowerCase().includes(q)||
+    (r.contractNo||'').toLowerCase().includes(q));
+  if(!fil.length){
+    list.innerHTML=`<div class="empty"><div class="empty-ico">📋</div>${active.length?'검색 결과 없음 / No results':'저장된 보고서 없음 / No records'}<br><small>새 보고서를 작성 후 저장해주세요</small></div>`;
+    return;
+  }
+  list.innerHTML='';
+  fil.forEach(r=>{
+    const d=document.createElement('div');d.className='rec-item';
+    const res=r.overallResult;
+    const badge=res==='Y'?'<span class="badge badge-pass">적합</span>':res==='N'?'<span class="badge badge-fail">부적합</span>':'<span class="badge badge-none">미판정</span>';
+    d.innerHTML=`
+      <div class="rec-no">${esc(r.reportNo||'—')}</div>
+      <div><div class="rec-model">${esc(r.custName||'고객 미입력')}</div><div class="rec-prod">${esc(r.modelName||'모델 미입력')} · S/N: ${esc(r.serialNo||'—')}</div></div>
+      ${badge}
+      <div class="rec-date">${r.installDate||r.createdAt?.slice(0,10)||'—'}</div>
+      <button class="rec-del" data-id="${r.id}">🗑</button>`;
+    d.addEventListener('click',e=>{if(!e.target.classList.contains('rec-del'))loadRecord(r.id)});
+    d.querySelector('.rec-del').addEventListener('click',e=>{
+      e.stopPropagation();
+      if(confirm(`보고서 ${r.reportNo||''} (${r.custName||'—'})를 삭제하시겠습니까?\nDelete this record?`))deleteRecord(r.id);
+    });
+    list.appendChild(d);
+  });
+}
+function updateRecCount(){const el=document.getElementById('rec-count');if(el)el.textContent=records.filter(r=>!r.deleted).length}
+
+// ── Print / PDF ──────────────────────────────────────────
+function preparePrint(){
+  SIG_IDS.forEach(id=>{
+    saveSigData(id);
+    const img=document.getElementById(`sig-${id}-img`);
+    if(img&&cur[`${id}_sig`])img.src=cur[`${id}_sig`];
+  });
+}
+function exportPrint(){
+  preparePrint();
+  if(window.electronAPI&&window.electronAPI.printPage)window.electronAPI.printPage();
+  else window.print();
+}
+async function exportPDF(){
+  preparePrint();
+  if(window.electronAPI&&window.electronAPI.savePDF){
+    const result=await window.electronAPI.savePDF();
+    if(result&&result.success)toast('PDF 저장 완료!');
+    else if(result&&result.error)toast('저장 실패: '+result.error);
+  }else{
+    window.print();
+  }
+}
+
+// ── Backup / Restore (File System Access API) ───────────
+function openFsaDB(){
+  return new Promise((res,rej)=>{
+    const req=indexedDB.open('f7141_fsa',1);
+    req.onupgradeneeded=e=>e.target.result.createObjectStore('handles');
+    req.onsuccess=e=>res(e.target.result);
+    req.onerror=rej;
+  });
+}
+async function storeFsaHandle(key,handle){
+  try{
+    const db=await openFsaDB();
+    await new Promise((res,rej)=>{
+      const tx=db.transaction('handles','readwrite');
+      tx.objectStore('handles').put(handle,key);
+      tx.oncomplete=res;tx.onerror=rej;
+    });
+  }catch(e){}
+}
+async function loadFsaHandle(key){
+  try{
+    const db=await openFsaDB();
+    return await new Promise(res=>{
+      const tx=db.transaction('handles','readonly');
+      const req=tx.objectStore('handles').get(key);
+      req.onsuccess=()=>res(req.result||null);
+      req.onerror=()=>res(null);
+    });
+  }catch(e){return null;}
+}
+let backupDirHandle=null;
+function updatePathDisplay(name){
+  const el=document.getElementById('backup-path-disp');
+  if(el)el.textContent=name||'기본 다운로드 폴더 / Default Downloads';
+}
+async function initBackupPath(){
+  const stored=localStorage.getItem('backup_dir_name');
+  backupDirHandle=await loadFsaHandle('backupDir');
+  if(backupDirHandle)updatePathDisplay(backupDirHandle.name);
+  else if(stored)updatePathDisplay(stored+' (재연결 필요 / Reconnect needed)');
+}
+async function setBackupDir(){
+  if(!('showDirectoryPicker' in window)){toast('이 브라우저에서는 경로 선택이 지원되지 않습니다');return}
+  try{
+    const handle=await window.showDirectoryPicker({mode:'readwrite',id:'f7141-backup'});
+    backupDirHandle=handle;
+    localStorage.setItem('backup_dir_name',handle.name);
+    await storeFsaHandle('backupDir',handle);
+    updatePathDisplay(handle.name);
+    toast('📁 경로 설정 완료: '+handle.name);
+  }catch(e){if(e.name!=='AbortError')toast('경로 설정 실패 / Failed to set path')}
+}
+async function backupAll(){
+  const data=JSON.stringify(records,null,2);
+  const fileName=`f7141_backup_${today()}.json`;
+  if(backupDirHandle){
+    try{
+      let perm=await backupDirHandle.queryPermission({mode:'readwrite'});
+      if(perm!=='granted')perm=await backupDirHandle.requestPermission({mode:'readwrite'});
+      if(perm==='granted'){
+        const fh=await backupDirHandle.getFileHandle(fileName,{create:true});
+        const writable=await fh.createWritable();
+        await writable.write(data);await writable.close();
+        toast(`✓ 백업 완료 (${records.length}건) → ${backupDirHandle.name}`);
+        return;
+      }
+    }catch(e){
+      console.warn('FSA backup failed:',e);
+      updatePathDisplay('(경로 오류 — 재설정 필요)');
+      backupDirHandle=null;
+    }
+  }
+  const b=new Blob([data],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(b);a.download=fileName;
+  a.click();URL.revokeObjectURL(a.href);
+  toast(`백업 완료 (${records.length}건) / Backup done`);
+}
+async function openBackupFile(){
+  if('showOpenFilePicker' in window){
+    try{
+      const opts={types:[{description:'JSON Backup',accept:{'application/json':['.json']}}],multiple:false};
+      if(backupDirHandle)opts.startIn=backupDirHandle;
+      const [fh]=await window.showOpenFilePicker(opts);
+      const file=await fh.getFile();
+      processRestore(file);
+      return;
+    }catch(e){if(e.name==='AbortError')return}
+  }
+  document.getElementById('restore-input').click();
+}
+function restoreFromInput(input){
+  const file=input.files[0];if(!file)return;
+  processRestore(file);input.value='';
+}
+function processRestore(file){
+  const fr=new FileReader();
+  fr.onload=e=>{
+    try{
+      const imp=JSON.parse(e.target.result);
+      if(!Array.isArray(imp))throw 0;
+      const ex=new Set(records.map(r=>r.id));
+      let added=0;
+      imp.forEach(r=>{if(!ex.has(r.id)){records.unshift(r);added++}});
+      saveDB();updateRecCount();renderRecords();
+      toast(`복원 완료 — ${added}건 추가 / Restored ${added} records`);
+    }catch{alert('올바른 백업 파일이 아닙니다 / Invalid backup file')}
+  };
+  fr.readAsText(file);
+}
+
+// ── Toast ──────────────────────────────────────────────
+let toastTimer=null;
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.classList.remove('show'),2200);
+}
+
+// ── WiFi Sync (태블릿 전용 — ts 타임스탬프 기반 병합) ─────
+const SYNC_PORT=8767;   // ⚠ APOLLON 성적서(8765)와 겹치지 않는 별도 포트
+function saveWifiIP(){localStorage.setItem('f7141_wifi_ip',document.getElementById('wifi-ip').value)}
+function loadWifiIP(){
+  const v=localStorage.getItem('f7141_wifi_ip');
+  if(v)document.getElementById('wifi-ip').value=v;
+}
+async function wifiSync(){
+  const rawIp=document.getElementById('wifi-ip').value.trim();
+  const st=document.getElementById('wifi-status');
+  if(!rawIp){st.textContent='⚠ IP를 입력하세요';return}
+  st.textContent='🔄 동기화 중...';
+  try{
+    const base=`http://${rawIp}:${SYNC_PORT}`;
+    const res=await fetch(`${base}/f7141/data`,{method:'GET',headers:{'Content-Type':'application/json'}});
+    if(!res.ok)throw new Error('서버 응답 오류 '+res.status);
+    const remote=await res.json();
+    loadDB();
+    const map={};
+    records.forEach(r=>map[r.id]=r);
+    remote.forEach(r=>{if(!map[r.id]||(r.ts||0)>(map[r.id].ts||0))map[r.id]=r;});
+    records.splice(0,records.length,...Object.values(map));
+    saveDB();updateRecCount();renderRecords();
+    await fetch(`${base}/f7141/data`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(records)});
+    st.textContent=`✅ 완료 (${records.filter(r=>!r.deleted).length}건)`;
+    toast('WiFi 동기화 완료!');
+  }catch(e){
+    const isMixed=location.protocol==='https:'&&(!e.message||e.message==='Failed to fetch'||e.message.startsWith('NetworkError'));
+    if(isMixed){
+      st.innerHTML='❌ Chrome 보안 설정 필요 &nbsp;<a href="chrome://flags/#unsafely-treat-insecure-origin-as-secure" style="color:var(--blue);font-size:11px">→ 설정 방법 보기</a>';
+      toast('⚙ chrome://flags 설정 필요 (아래 안내 확인)');
+    }else{
+      st.textContent='❌ 실패: '+e.message;
+      toast('동기화 실패: '+e.message);
+    }
+  }
+}
+
+const GITHUB_URL='https://hsclave.github.io/f7141/';
+function renderDesktopQR(tries){
+  const container=document.getElementById('qr-container');
+  if(!container)return;
+  if(typeof QRCode==='undefined'){
+    if(tries<25){setTimeout(()=>renderDesktopQR(tries+1),200);return}
+    container.innerHTML='<div style="font-size:11px;color:var(--t3)">QR 생성 불가 (인터넷 연결 없음)<br>아래 주소를 태블릿 브라우저에 직접 입력하세요</div>';
+    return;
+  }
+  try{
+    container.innerHTML='';
+    new QRCode(container,{text:GITHUB_URL,width:148,height:148,
+      colorDark:'#1C2B4A',colorLight:'#FFFFFF',correctLevel:QRCode.CorrectLevel.M});
+  }catch(e){
+    container.innerHTML='<div style="font-size:11px;color:var(--t3)">QR 생성 실패 — 아래 주소를 직접 입력하세요</div>';
+  }
+}
+function initWifiSync(){
+  loadWifiIP();
+  if(location.port==='8768'&&!document.getElementById('wifi-ip').value){
+    document.getElementById('wifi-ip').value=location.hostname;
+    saveWifiIP();
+  }
+  if(window.electronAPI&&window.electronAPI.isElectron){
+    const row=document.getElementById('wifi-section').querySelector('.wifi-row');
+    if(row)row.style.display='none';
+
+    const sec=document.getElementById('wifi-section');
+    if(sec&&!document.getElementById('desktop-sync-note')){
+      const note=document.createElement('div');
+      note.id='desktop-sync-note';
+      note.style.cssText='font-size:12px;color:var(--t3);line-height:1.6';
+      note.innerHTML='📡 <strong>이 PC가 동기화 서버입니다.</strong><br>'+
+        '동기화는 <strong>태블릿에서</strong> 실행해주세요. 태블릿의 동기화 버튼을 누르면 양쪽 기록이 자동으로 합쳐집니다.';
+      sec.insertBefore(note,sec.firstChild);
+    }
+    const wrap=document.getElementById('desktop-qr-wrap');
+    if(wrap){
+      wrap.style.display='block';
+      document.getElementById('qr-url-title').textContent='📱 태블릿 앱 설치 (GitHub Pages)';
+      document.getElementById('qr-url-text').textContent=GITHUB_URL;
+      renderDesktopQR(0);
+    }
+  }
+}
+
+// ── Init ───────────────────────────────────────────────
+loadDB();loadCompanyInfo();updateRecCount();
+initReportNoUI();
+cur=mkRecord();populateForm();
+initSigPads();
+initBackupPath();
+initWifiSync();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+if('serviceWorker' in navigator && location.protocol!=='file:'){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('service-worker.js').catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
