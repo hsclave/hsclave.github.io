@@ -2,7 +2,7 @@
   "name": "APOLLON 성적서",
   "short_name": "APOLLON",
   "description": "APOLLON 제품 검사 성적서 F8033",
-  "start_url": "/inspection_app.html",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "landscape",
