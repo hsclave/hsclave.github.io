@@ -468,6 +468,21 @@ select.inp{cursor:pointer}
 .chk-group input[type="checkbox"]{width:18px;height:18px;accent-color:var(--blue);cursor:pointer}
 .sig-block-hd{font-size:12.5px;font-weight:700;color:var(--t1);margin-bottom:8px}
 
+/* 주소 검색 모달 */
+.addr-modal{display:none;position:fixed;inset:0;z-index:200;
+  background:rgba(16,22,32,.55);align-items:center;justify-content:center;padding:16px}
+.addr-modal.on{display:flex}
+.addr-panel{background:var(--surface);border-radius:var(--r);overflow:hidden;
+  width:100%;max-width:520px;height:min(560px,90vh);display:flex;flex-direction:column;
+  box-shadow:0 18px 50px rgba(0,0,0,.3)}
+.addr-hd{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:11px 14px;border-bottom:1px solid var(--bdr-lt);
+  font-size:13.5px;font-weight:700;color:var(--t1);flex-shrink:0}
+.addr-x{border:none;background:transparent;font-size:17px;line-height:1;
+  color:var(--t3);cursor:pointer;padding:4px 6px;border-radius:4px}
+.addr-x:hover{background:var(--surface2);color:var(--t1)}
+.addr-box{flex:1;min-height:0}
+
 @media print{
   .pf-row{padding:3pt 6pt;border-bottom:0.5px solid #ccc}
   .pf-label{font-size:8pt}
@@ -545,7 +560,15 @@ select.inp{cursor:pointer}
         </div>
         <div class="field" style="grid-column:1/-1">
           <label class="lbl">주소 <span class="lbl-en">Address</span></label>
-          <input class="inp" data-f="address" placeholder="설치 현장 주소">
+          <div style="display:flex;gap:6px">
+            <input class="inp" data-f="address" placeholder="설치 현장 주소" style="flex:1;min-width:0">
+            <button type="button" class="btn btn-sec no-print" onclick="searchAddress()"
+                    style="white-space:nowrap;padding:8px 13px">🔍 주소 검색</button>
+          </div>
+        </div>
+        <div class="field" style="grid-column:1/-1">
+          <label class="lbl">상세주소 <span class="lbl-en">Address Detail</span></label>
+          <input class="inp" data-f="addressDetail" placeholder="동 / 층 / 호 등">
         </div>
         <div class="field">
           <label class="lbl">고객 담당자 <span class="lbl-en">Contact Person</span></label>
@@ -721,7 +744,6 @@ select.inp{cursor:pointer}
         <div class="chk-group" id="chk-eduMaterial" style="margin-top:4px">
           <label><input type="checkbox" data-cf="eduMaterial" value="사용설명서">사용설명서</label>
           <label><input type="checkbox" data-cf="eduMaterial" value="간단 조작 가이드">간단 조작 가이드</label>
-          <label><input type="checkbox" data-cf="eduMaterial" value="보증서">보증서</label>
           <label><input type="checkbox" data-cf="eduMaterial" value="기타">기타</label>
         </div>
         <input class="inp" data-f="eduMaterialEtc" placeholder="기타 자료명" style="margin-top:8px;max-width:340px">
@@ -865,6 +887,17 @@ select.inp{cursor:pointer}
   </div>
 </div>
 
+<!-- 주소 검색 모달 -->
+<div class="addr-modal no-print" id="addr-modal">
+  <div class="addr-panel">
+    <div class="addr-hd">
+      <span>주소 검색 <span style="font-size:11px;color:var(--t3);font-weight:400">/ Address Search</span></span>
+      <button type="button" class="addr-x" onclick="closeAddrModal()" aria-label="닫기">✕</button>
+    </div>
+    <div class="addr-box" id="addr-box"></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 </div>
 <script>
@@ -874,7 +907,7 @@ const MODELS=['APOLLON 2350V','APOLLON 2330V','APOLLON 2322V','APOLLON 2318V'];
 const PF_GROUPS=['p1_1','p1_2','p1_3',
   'p2_1','p2_2','p2_3','p2_4','p2_5',
   'p3_1','p3_2','p3_3','p3_4','p3_5','p3_6'];
-const DATA_FIELDS=['custName','installLoc','address','custContact','custPhone',
+const DATA_FIELDS=['custName','installLoc','address','addressDetail','custContact','custPhone',
   'installDate','completeTime','contractNo',
   'prodName','modelName','serialNo','mfgDate',
   'p1_1_note','p1_2_note','p1_3_note',
@@ -907,6 +940,47 @@ function mkRecord(){
   CHK_GROUPS.forEach(c=>{r[c]=[]});
   return r;
 }
+
+// ── 주소 검색 (카카오 우편번호 서비스) ────────────────────
+// 인터넷이 없으면 라이브러리가 로드되지 않습니다.
+// 그 경우 직접 입력하도록 안내만 하고 넘어갑니다.
+function searchAddress(){
+  if(typeof daum==='undefined'||!daum.Postcode){
+    toast('인터넷 연결이 없어 주소 검색을 쓸 수 없습니다. 직접 입력해주세요.');
+    const el=document.querySelector('[data-f="address"]');
+    if(el)el.focus();
+    return;
+  }
+  const modal=document.getElementById('addr-modal');
+  const box=document.getElementById('addr-box');
+  box.innerHTML='';
+  modal.classList.add('on');
+  new daum.Postcode({
+    width:'100%',
+    height:'100%',
+    oncomplete:function(data){
+      const addr=data.roadAddress||data.jibunAddress||'';
+      const el=document.querySelector('[data-f="address"]');
+      if(el){el.value=addr;if(cur)cur.address=addr;}
+      closeAddrModal();
+      const d=document.querySelector('[data-f="addressDetail"]');
+      if(d)d.focus();
+    }
+  }).embed(box);
+}
+function closeAddrModal(){
+  const modal=document.getElementById('addr-modal');
+  if(modal)modal.classList.remove('on');
+  const box=document.getElementById('addr-box');
+  if(box)box.innerHTML='';
+}
+// 바깥 영역 클릭 / ESC 로 닫기
+document.getElementById('addr-modal').addEventListener('click',e=>{
+  if(e.target.id==='addr-modal')closeAddrModal();
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')closeAddrModal();
+});
 
 // ── 보고서 번호 (HSICR-YY-NNNN) ─────────────────────────
 function initReportNoUI(){
@@ -1020,7 +1094,7 @@ function buildPF2(el){
   el.innerHTML='';
   [{v:'Y',ko:labels[0]},{v:'N',ko:labels[1]}].forEach(({v,ko})=>{
     const b=document.createElement('button');
-    b.className='pf-btn';b.type='button';
+    b.className=`pf-btn ${v}`;b.type='button';   // Y/N 클래스가 있어야 선택 시 색이 바뀜
     b.textContent=ko;
     b.dataset.bgroup=group;b.dataset.bval=v;
     b.onclick=()=>{cur[group]=(cur[group]===v)?'':v;refreshPF2()};
@@ -1457,6 +1531,7 @@ initBackupPath();
 initWifiSync();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
 if('serviceWorker' in navigator && location.protocol!=='file:'){
   window.addEventListener('load',()=>{
