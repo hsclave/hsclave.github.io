@@ -2,7 +2,7 @@
  * APOLLON Service Worker — enables offline use after first load
  * v2: cache-first navigation, force fresh cache on update
  */
-const CACHE = 'apollon-v2';
+const CACHE = 'apollon-v3';
 const PRECACHE = [
   '/',
   '/inspection_app.html',
