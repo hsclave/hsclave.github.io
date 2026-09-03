@@ -909,6 +909,7 @@ select.inp{cursor:pointer}
       <button class="btn btn-sec" onclick="backupAll()">💾 백업</button>
       <button class="btn btn-sec" onclick="setBackupDir()" id="btn-set-path">📁 경로 설정</button>
       <button class="btn btn-sec" onclick="openBackupFile()">📂 불러오기</button>
+      <button class="btn btn-sec" style="color:var(--fail);border-color:var(--fail-bdr)" onclick="resetAllRecords()">🗑 전체 삭제</button>
       <input type="file" id="restore-input" accept=".json" style="display:none" onchange="restoreFromInput(this)">
     </div>
     <div style="font-size:11px;color:var(--t3);display:flex;align-items:center;gap:4px;min-width:0">
@@ -1034,7 +1035,7 @@ function loadLampUI(){
 }
 function mkRecord(){
   const yy=new Date().getFullYear().toString().slice(-2);
-  const r={id:uid(),createdAt:new Date().toISOString(),reportNo:`HSPIR-${yy}-`,
+  const r={id:uid(),createdAt:new Date().toISOString(),ts:Date.now(),reportNo:`HSPIR-${yy}-`,
     inspDate:today(),model:'',prodNo:'',overallResult:'',s2_volt_lamp:'',
     inspector_sig:'',approver_sig:'',notes2:'',notes2_drawing:'',ci_photos:[]};
   PF_GROUPS.forEach(g=>r[g]='');
@@ -1400,6 +1401,7 @@ function saveRecord(){
   // Ensure latest sig and bigo data captured
   SIG_IDS.forEach(id=>saveSigData(id));
   saveBigoData();
+  cur.ts=Date.now();   // 수정 시각 갱신 — 동기화 병합의 기준
   const idx=records.findIndex(r=>r.id===cur.id);
   if(idx>=0)records[idx]=cur;else records.unshift(cur);
   saveDB();updateRecCount();toast('저장되었습니다 ✓  / Saved');
@@ -1628,6 +1630,14 @@ async function setBackupDir(){
   }
 }
 
+// ── Reset All Records ──────────────────────────────────
+function resetAllRecords(){
+  if(!confirm('모든 기록을 삭제합니다. 계속하시겠습니까?\nDelete all records. Are you sure?')) return;
+  records.splice(0,records.length);
+  saveDB();updateRecCount();renderRecords();
+  toast('전체 삭제 완료 / All records deleted');
+}
+
 // ── Backup / Restore ───────────────────────────────────
 async function backupAll(){
   const data=JSON.stringify(records,null,2);
@@ -1769,8 +1779,8 @@ async function wifiSync(){
     loadDB();const local=[...records];
     const map={};
     local.forEach(r=>map[r.id]=r);
-  remote.forEach(r=>{ if(!map[r.id]||(!map[r.id].deleted&&(r.deleted||r.ts>map[r.id].ts))) map[r.id]=r; });
-    records=Object.values(map);
+    remote.forEach(r=>{ if(!map[r.id]||(r.ts||0)>(map[r.id].ts||0)) map[r.id]=r; });
+    records.splice(0,records.length,...Object.values(map));
     saveDB();
     updateRecCount();
     renderRecords();
