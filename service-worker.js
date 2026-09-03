@@ -10,7 +10,7 @@
  */
 const CACHE = 'apollon-v5';
 const PRECACHE = ['/', '/inspection_app.html', '/manifest.json'];
- 
+
 // ── 설치: 필수 파일 미리 캐시 ────────────────────────────
 self.addEventListener('install', e => {
   e.waitUntil(
@@ -20,7 +20,7 @@ self.addEventListener('install', e => {
       .then(() => self.skipWaiting())
   );
 });
- 
+
 // ── 활성화: 이전 버전 캐시 정리 ──────────────────────────
 self.addEventListener('activate', e => {
   e.waitUntil(
@@ -29,26 +29,26 @@ self.addEventListener('activate', e => {
       .then(() => self.clients.claim())
   );
 });
- 
+
 // ── 요청 라우팅 ─────────────────────────────────────────
 self.addEventListener('fetch', e => {
   const req = e.request;
   if (req.method !== 'GET') return;
- 
+
   let url;
   try { url = new URL(req.url); } catch (err) { return; }
- 
+
   if (!url.protocol.startsWith('http')) return;
   if (url.port === '8765') return;            // 동기화 API는 절대 캐시하지 않음
- 
+
   const isPage =
     req.mode === 'navigate' ||
     url.pathname === '/' ||
     url.pathname.endsWith('.html');
- 
+
   e.respondWith(isPage ? networkFirst(req) : cacheFirst(req));
 });
- 
+
 // 페이지: 네트워크 먼저 → 실패하면 캐시
 async function networkFirst(req) {
   try {
@@ -66,7 +66,7 @@ async function networkFirst(req) {
     return offlineResponse();
   }
 }
- 
+
 // 정적 파일: 캐시 먼저 → 없으면 네트워크에서 받아 캐시
 async function cacheFirst(req) {
   const cached = await caches.match(req);
@@ -82,7 +82,7 @@ async function cacheFirst(req) {
     return offlineResponse();
   }
 }
- 
+
 function offlineResponse() {
   return new Response('오프라인 상태입니다 / Offline', {
     status: 503,
