@@ -1423,7 +1423,9 @@ function loadRecord(id){
   populateForm();switchView('form');
 }
 function deleteRecord(id){
-  records=records.filter(r=>r.id!==id);
+  // Soft-delete: mark as deleted with fresh timestamp so sync propagates deletion
+  const idx=records.findIndex(r=>r.id===id);
+  if(idx>=0){records[idx].deleted=true;records[idx].ts=Date.now();}
   if(cur?.id===id)cur=mkRecord();
   saveDB();updateRecCount();renderRecords();toast('삭제됨 / Deleted');
 }
@@ -1443,9 +1445,10 @@ function switchView(v){
 function renderRecords(){
   const q=(document.getElementById('search').value||'').toLowerCase();
   const list=document.getElementById('rec-list');
-  const fil=records.filter(r=>!q||(r.reportNo||'').toLowerCase().includes(q)||(r.model||'').toLowerCase().includes(q)||(r.prodNo||'').toLowerCase().includes(q));
+  const active=records.filter(r=>!r.deleted);
+  const fil=active.filter(r=>!q||(r.reportNo||'').toLowerCase().includes(q)||(r.model||'').toLowerCase().includes(q)||(r.prodNo||'').toLowerCase().includes(q));
   if(!fil.length){
-    list.innerHTML=`<div class="empty"><div class="empty-ico">📋</div>${records.length?'검색 결과 없음 / No results':'저장된 성적서 없음 / No records'}<br><small>새 성적서를 작성 후 저장해주세요</small></div>`;
+    list.innerHTML=`<div class="empty"><div class="empty-ico">📋</div>${active.length?'검색 결과 없음 / No results':'저장된 성적서 없음 / No records'}<br><small>새 성적서를 작성 후 저장해주세요</small></div>`;
     return;
   }
   list.innerHTML='';
@@ -1467,7 +1470,7 @@ function renderRecords(){
     list.appendChild(d);
   });
 }
-function updateRecCount(){const el=document.getElementById('rec-count');if(el)el.textContent=records.length}
+function updateRecCount(){const el=document.getElementById('rec-count');if(el)el.textContent=records.filter(r=>!r.deleted).length}
 
 // ── Print ──────────────────────────────────────────────
 function preparePrint(){
@@ -1777,7 +1780,7 @@ async function wifiSync(){
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify(records)
     });
-    st.textContent=`✅ 완료 (${records.length}건)`;
+    st.textContent=`✅ 완료 (${records.filter(r=>!r.deleted).length}건)`;
     toast('WiFi 동기화 완료!');
   }catch(e){
     // Mixed-content block: HTTPS page → HTTP server (GitHub Pages → office PC)
